@@ -1,0 +1,26 @@
+﻿<Window x:Class="LoCyanFrpDesktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LoCyanFrpDesktop"
+        ResizeMode="NoResize"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="LoCyanFrp-Desktop" Height="354" Width="800">
+    <Grid Margin="0,-4,0,-1">
+        <Label Content="账号" HorizontalAlignment="Left" Height="34" Margin="80,60,0,0" VerticalAlignment="Top" Width="49" FontSize="20"/>
+        <Label Content="密码" HorizontalAlignment="Left" Height="34" Margin="80,134,0,0" VerticalAlignment="Top" Width="49" FontSize="20"/>
+        <TextBox x:Name="txtusername" HorizontalAlignment="Left" Margin="232,63,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="479" Height="27" FontSize="18"/>
+        <TextBox x:Name="txtpassword" HorizontalAlignment="Left" Margin="232,137,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="479" Height="27" FontSize="18"/>
+        <Grid Margin="57,227,57,57" RenderTransformOrigin="0.373,0.58">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="338"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="登录" HorizontalAlignment="Left" Width="185" Click="Button_Click_1" FontSize="20" Margin="45,0,0,0"/>
+            <Button Content="注册" HorizontalAlignment="Left" Width="185" Click="Button_Click_2" FontSize="20" Grid.Column="1" Margin="108,0,0,0"/>
+        </Grid>
+    </Grid>
+
+</Window>
