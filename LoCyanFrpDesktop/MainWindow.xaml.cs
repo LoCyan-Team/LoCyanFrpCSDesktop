@@ -16,6 +16,9 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+using Path = System.IO.Path;
 
 namespace LoCyanFrpDesktop
 {
@@ -34,7 +37,51 @@ namespace LoCyanFrpDesktop
             InitializeComponent();
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = new BitmapImage(iconUri);
+            InitializeAutoLaunch();
             InitializeAutoLogin();
+        }
+
+        private void InitializeAutoLaunch()
+        {
+            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filePath = Path.Combine(documentsPath, "auto_launch.ini");
+
+            if (File.Exists(filePath))
+            {
+                string url = File.ReadAllText(filePath);
+
+                // 使用正则表达式提取token和id
+                Match match = Regex.Match(url, @"locyanfrp://([^/]+)/([^/]+)");
+
+                if (match.Success && match.Groups.Count == 3)
+                {
+                    string token = match.Groups[1].Value;
+                    string id = match.Groups[2].Value;
+                    string appDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+                    RunCmdCommand($"\"{appDirectory}/frpc.exe\" -u {token} -p {id}");
+                    File.Delete(filePath );
+                    Close();
+                }
+                else
+                {
+                    System.Windows.Forms.MessageBox.Show($"自动启动出错 \n url: {url} \n filepath: {filePath}", "警告");
+                }
+            }
+        }
+
+        private void RunCmdCommand(string command)
+        {
+            // 创建一个 ProcessStartInfo 对象
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = "cmd.exe", // 指定要运行的命令行程序
+                Arguments = "/k " + command, // 使用 /k 参数保持 cmd 窗口打开，显示输出内容
+                UseShellExecute = true, // 设置为 true 以便在新窗口中显示命令行窗口
+                CreateNoWindow = false // 设置为 false 以显示命令行窗口
+            };
+
+            // 创建一个 Process 对象并启动进程
+            Process.Start(psi);
         }
 
         private async void InitializeAutoLogin() {
@@ -73,7 +120,6 @@ namespace LoCyanFrpDesktop
                 using (var HttpClient = new HttpClient())
                 {
                     string url = $"https://api.locyanfrp.cn/Account/info?username={username_auto}&token={token_auto}";
-                    Console.WriteLine(url);
                     HttpResponseMessage response = await HttpClient.GetAsync(url);
                     response.EnsureSuccessStatusCode();
                     string jsonString = await response.Content.ReadAsStringAsync();

@@ -162,7 +162,7 @@ namespace LoCyanFrpDesktop
             }
 
             if (proxy_id == 0) {
-                System.Windows.Forms.MessageBox.Show("警告", "无法将隧道名解析为隧道ID，请检查自己的隧道配置");
+                System.Windows.Forms.MessageBox.Show("无法将隧道名解析为隧道ID，请检查自己的隧道配置", "警告");
                 return;
             }
 

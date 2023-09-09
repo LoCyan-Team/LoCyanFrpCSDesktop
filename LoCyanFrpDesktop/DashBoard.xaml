@@ -14,17 +14,34 @@
         </Grid>
         <TabControl Margin="0,105,0,0">
             <TabItem Header="隧道列表" HorizontalAlignment="Left" Margin="-2,-2,0,0" Width="63">
-                <Grid Background="#FFE5E5E5">
+                <Grid Background="#FFE5E5E5" Margin="0,0,-3,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="251*"/>
+                        <ColumnDefinition Width="82*"/>
+                        <ColumnDefinition Width="169*"/>
                         <ColumnDefinition Width="721*"/>
                     </Grid.ColumnDefinitions>
-                    <ListBox x:Name="proxies_list" ItemsSource="{Binding Proxies}" Grid.ColumnSpan="2" Margin="10,10,360,10" SelectionChanged="Proxies_List_SelectionChanged"/>
-                    <Button Grid.Column="1" Content="启动隧道" HorizontalAlignment="Left" Margin="462,143,0,0" VerticalAlignment="Top" Height="63" Width="157" FontSize="20" Click="Button_Click"/>
+                    <Grid Grid.ColumnSpan="3" Margin="0,0,3,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <!-- First column takes remaining space -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Second column is auto-sized for the button -->
+                        </Grid.ColumnDefinitions>
+                        <ListBox x:Name="proxies_list" ItemsSource="{Binding Proxies}" Margin="0,0,5,0" Grid.Column="0" SelectionChanged="Proxies_List_SelectionChanged"/>
+                        <Button Content="启动隧道" Grid.Column="1" Margin="0,157,0,0" VerticalAlignment="Top" Height="63" Width="157" FontSize="20" Click="Button_Click"/>
+                    </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="关于">
-                <Grid Background="#FFE5E5E5"/>
+            <TabItem Header="隧道运行情况" HorizontalAlignment="Left" Width="99" Margin="-2,-2,0,0">
+                
+            </TabItem>
+            <TabItem Header="关于" HorizontalAlignment="Left" Width="36">
+                <Grid Background="#FFE5E5E5">
+                    <Label Content="LoCyanFrp CS Application" HorizontalAlignment="Left" Margin="42,31,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.618,-0.217" Width="485" FontSize="38"/>
+                    <Label Content="版本 / Version: 1.1" HorizontalAlignment="Left" Margin="42,94,0,0" VerticalAlignment="Top" Width="380" FontSize="15"/>
+                    <Label Content="开发者 / Developer: Daiyangcheng" HorizontalAlignment="Left" Margin="42,128,0,0" VerticalAlignment="Top" Width="380" FontSize="15"/>
+                    <Label Content="Copyright © 2021 - 2023 杭州樱芸网络科技有限公司 All rights reserved." HorizontalAlignment="Left" Margin="42,162,0,0" VerticalAlignment="Top" Width="535" FontSize="15"/>
+                </Grid>
             </TabItem>
         </TabControl>
 

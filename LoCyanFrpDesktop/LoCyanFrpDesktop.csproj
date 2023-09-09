@@ -51,10 +51,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>C9CF28A26A848533E124C4C8DF1CB08C0252AA50</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>321F3583083495CFE4F0A03672913475DCC9DD5E</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>LoCyanFrpDesktop_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>LoCyanFrpDesktop_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -134,6 +134,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="LoCyanFrpDesktop_1_TemporaryKey.pfx" />
+    <None Include="LoCyanFrpDesktop_2_TemporaryKey.pfx" />
     <None Include="LoCyanFrpDesktop_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

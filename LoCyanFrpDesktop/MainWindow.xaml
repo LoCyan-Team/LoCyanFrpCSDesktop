@@ -18,8 +18,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition Width="338"/>
             </Grid.ColumnDefinitions>
-            <Button Content="登录" HorizontalAlignment="Left" Width="185" Click="Button_Click_1" FontSize="20" Margin="45,0,0,0"/>
-            <Button Content="注册" HorizontalAlignment="Left" Width="185" Click="Button_Click_2" FontSize="20" Grid.Column="1" Margin="108,0,0,0"/>
+            <Button Content="登录" HorizontalAlignment="Left" Width="186" Click="Button_Click_1" FontSize="20" Margin="250,0,0,0" Grid.ColumnSpan="2"/>
         </Grid>
     </Grid>
 
