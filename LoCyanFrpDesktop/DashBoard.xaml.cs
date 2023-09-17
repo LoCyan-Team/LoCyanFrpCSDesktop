@@ -77,7 +77,6 @@ namespace LoCyanFrpDesktop
                 {
                     // 等待请求
                     HttpResponseMessage response = await client.GetAsync(url);
-                    Console.WriteLine(response.Content.ToString());
                     // 确保请求完成
                     response.EnsureSuccessStatusCode();
                     // 结果转换为字符串

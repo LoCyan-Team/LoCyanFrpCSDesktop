@@ -1,6 +1,6 @@
 [Setup]
 AppName=LoCyanFrp
-AppVerName=LoCyanFrp - 2.0
+AppVerName=LoCyanFrp - 1.2
 DefaultDirName={pf}\LoCyanFrp
 DefaultGroupName=LoCyanFrp
 UninstallDisplayIcon={app}\LoCyanFrpDesktop.exe
@@ -17,6 +17,7 @@ Source: "D:\Frp\LoCyanFrpDesktop-Impl\LoCyanFrpDesktop\bin\Release\Microsoft.Exc
 Source: "D:\Frp\LoCyanFrpDesktop-Impl\LoCyanFrpDesktop\bin\Release\Microsoft.Exchange.WebServices.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Frp\LoCyanFrpDesktop-Impl\LoCyanFrpDesktop\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Frp\LoCyanFrpDesktop-Impl\LoCyanFrpDesktop\bin\Release\frpc.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Frp\LoCyanFrpDesktop-Impl\LoCyanFrpDesktop\bin\Release\HandyControl.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Frp\LoCyanFrpDesktop-Impl\LoCyanFrpDesktop\resource\*"; DestDir: "{app}\resource"; Flags: ignoreversion recursesubdirs
 
 [Icons]

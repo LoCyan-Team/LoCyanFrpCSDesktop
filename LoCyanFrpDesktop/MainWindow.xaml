@@ -9,16 +9,16 @@
         WindowStartupLocation="CenterScreen"
         Title="LoCyanFrp-Desktop" Height="354" Width="800">
     <Grid Margin="0,-4,0,-1">
-        <Label Content="账号" HorizontalAlignment="Left" Height="34" Margin="80,60,0,0" VerticalAlignment="Top" Width="49" FontSize="20"/>
-        <Label Content="密码" HorizontalAlignment="Left" Height="34" Margin="80,134,0,0" VerticalAlignment="Top" Width="49" FontSize="20"/>
-        <TextBox x:Name="txtusername" HorizontalAlignment="Left" Margin="232,63,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="479" Height="27" FontSize="18"/>
-        <TextBox x:Name="txtpassword" HorizontalAlignment="Left" Margin="232,137,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="479" Height="27" FontSize="18"/>
+        <Label Content="账号" HorizontalAlignment="Left" Height="44" Margin="80,60,0,0" VerticalAlignment="Top" Width="70" FontSize="20" BorderBrush="#00000000"/>
+        <Label Content="密码" HorizontalAlignment="Left" Height="38" Margin="80,134,0,0" VerticalAlignment="Top" Width="70" FontSize="20" BorderBrush="#00000000"/>
+        <TextBox x:Name="txtusername" HorizontalAlignment="Left" Margin="232,67,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="479" Height="38" FontSize="18"/>
+        <PasswordBox x:Name="txtpassword" HorizontalAlignment="Left" Margin="232,138,0,0" VerticalAlignment="Top" Width="479" Height="38" FontSize="18"/>
         <Grid Margin="57,227,57,57" RenderTransformOrigin="0.373,0.58">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="338"/>
             </Grid.ColumnDefinitions>
-            <Button Content="登录" HorizontalAlignment="Left" Width="186" Click="Button_Click_1" FontSize="20" Margin="250,0,0,0" Grid.ColumnSpan="2"/>
+            <Button Content="登录" HorizontalAlignment="Left" Width="186" Click="Button_Click_1" FontSize="20" Margin="250,0,0,0" Grid.ColumnSpan="2" Height="40" BorderBrush="#FF6B6A6A"/>
         </Grid>
     </Grid>
 

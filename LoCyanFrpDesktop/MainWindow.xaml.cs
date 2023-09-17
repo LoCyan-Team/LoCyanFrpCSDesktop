@@ -19,6 +19,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Path = System.IO.Path;
+using System.Security;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 namespace LoCyanFrpDesktop
 {
@@ -64,7 +66,7 @@ namespace LoCyanFrpDesktop
                 }
                 else
                 {
-                    System.Windows.Forms.MessageBox.Show($"自动启动出错 \n url: {url} \n filepath: {filePath}", "警告");
+                    MessageBox.Show($"自动启动出错 \n url: {url} \n filepath: {filePath}", "警告");
                 }
             }
         }
@@ -140,7 +142,16 @@ namespace LoCyanFrpDesktop
         private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
             string username = txtusername.Text;
-            string password = txtpassword.Text;
+            SecureString secure_password = txtpassword.SecurePassword;
+            string password = ConvertToUnsecureString(secure_password);
+
+            // 使用密码，例如验证或其他操作
+            if (string.IsNullOrEmpty(password))
+            {
+                MessageBox.Show("解析密码的过程中发生错误, 请联系开发者!", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
 
             if (username != "" && password != "")
             {
@@ -162,10 +173,10 @@ namespace LoCyanFrpDesktop
 
                         if (responseObject.Status != 0)
                         {
-                            System.Windows.Forms.MessageBox.Show("账号或密码错误！", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("账号或密码错误！", "警告", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                         else {
-                            System.Windows.Forms.MessageBox.Show($"登录成功, 获取到登录Token: {responseObject.Token}", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show($"登录成功, 获取到登录Token: {responseObject.Token}", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                             Properties.Settings.Default.LoginToken = responseObject.Token;
                             Properties.Settings.Default.username = responseObject.UserData.Username;
                             Properties.Settings.Default.FrpToken = responseObject.UserData.FrpToken;
@@ -178,18 +189,38 @@ namespace LoCyanFrpDesktop
                     }
                     catch (HttpRequestException ex)
                     {
-                        Console.WriteLine($"请求失败: {ex.Message}");
+                        MessageBox.Show($"请求API的过程中出错 \n 报错信息: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
             } else
             {
-                System.Windows.Forms.MessageBox.Show("用户名 / 密码不能为空!", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("用户名 / 密码不能为空!", "警告", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        // 将 SecureString 转化为 string
+        private string ConvertToUnsecureString(SecureString securePassword)
+        {
+            if (securePassword == null)
+            {
+                return string.Empty;
+            }
+
+            IntPtr unmanagedString = IntPtr.Zero;
+            try
+            {
+                unmanagedString = System.Runtime.InteropServices.Marshal.SecureStringToGlobalAllocUnicode(securePassword);
+                return System.Runtime.InteropServices.Marshal.PtrToStringUni(unmanagedString);
+            }
+            finally
+            {
+                System.Runtime.InteropServices.Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+            }
         }
     }
 
@@ -241,6 +272,5 @@ namespace LoCyanFrpDesktop
         public int Outbound { get; set; }
         public string Avatar { get; set; }
     }
-
 
 }
