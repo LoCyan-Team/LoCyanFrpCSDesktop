@@ -61,7 +61,7 @@ namespace LoCyanFrpDesktop
                     string id = match.Groups[2].Value;
                     string appDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
                     RunCmdCommand($"\"{appDirectory}/frpc.exe\" -u {token} -p {id}");
-                    File.Delete(filePath );
+                    File.Delete(filePath);
                     Close();
                 }
                 else
@@ -78,6 +78,7 @@ namespace LoCyanFrpDesktop
             {
                 FileName = "cmd.exe", // 指定要运行的命令行程序
                 Arguments = "/k " + command, // 使用 /k 参数保持 cmd 窗口打开，显示输出内容
+                Verb = "runas",
                 UseShellExecute = true, // 设置为 true 以便在新窗口中显示命令行窗口
                 CreateNoWindow = false // 设置为 false 以显示命令行窗口
             };
@@ -86,7 +87,8 @@ namespace LoCyanFrpDesktop
             Process.Start(psi);
         }
 
-        private async void InitializeAutoLogin() {
+        private async void InitializeAutoLogin()
+        {
             bool islogin = await CheckLogined();
             if (islogin)
             {
@@ -155,7 +157,8 @@ namespace LoCyanFrpDesktop
 
             if (username != "" && password != "")
             {
-                using (var httpClient = new HttpClient()) {
+                using (var httpClient = new HttpClient())
+                {
                     string url = $"https://api.locyanfrp.cn/User/DoLogin?username={username}&password={password}";
                     try
                     {
@@ -175,7 +178,8 @@ namespace LoCyanFrpDesktop
                         {
                             MessageBox.Show("账号或密码错误！", "警告", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
-                        else {
+                        else
+                        {
                             MessageBox.Show($"登录成功, 获取到登录Token: {responseObject.Token}", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
                             Properties.Settings.Default.LoginToken = responseObject.Token;
                             Properties.Settings.Default.username = responseObject.UserData.Username;
@@ -192,7 +196,8 @@ namespace LoCyanFrpDesktop
                         MessageBox.Show($"请求API的过程中出错 \n 报错信息: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
-            } else
+            }
+            else
             {
                 MessageBox.Show("用户名 / 密码不能为空!", "警告", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
@@ -221,6 +226,11 @@ namespace LoCyanFrpDesktop
             {
                 System.Runtime.InteropServices.Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 

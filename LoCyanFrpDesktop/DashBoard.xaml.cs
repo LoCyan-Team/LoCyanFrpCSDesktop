@@ -190,6 +190,7 @@ namespace LoCyanFrpDesktop
             {
                 FileName = "cmd.exe", // 指定要运行的命令行程序
                 Arguments = "/k " + command, // 使用 /k 参数保持 cmd 窗口打开，显示输出内容
+                Verb = "runas",
                 UseShellExecute = true, // 设置为 true 以便在新窗口中显示命令行窗口
                 CreateNoWindow = false // 设置为 false 以显示命令行窗口
             };
