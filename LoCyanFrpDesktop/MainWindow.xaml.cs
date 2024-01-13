@@ -21,13 +21,17 @@ using System.Text.RegularExpressions;
 using Path = System.IO.Path;
 using System.Security;
 using MessageBox = HandyControl.Controls.MessageBox;
+using Wpf.Ui.Common;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Appearance;
+using System.ComponentModel;
 
 namespace LoCyanFrpDesktop
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : UiWindow
     {
 
         private InfoResponseObjectt UserInfo;
@@ -141,10 +145,10 @@ namespace LoCyanFrpDesktop
             }
         }
 
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void Login_Click(object sender, RoutedEventArgs e)
         {
-            string username = txtusername.Text;
-            SecureString secure_password = txtpassword.SecurePassword;
+            string username = Username.Text;
+            SecureString secure_password = Password.SecurePassword;
             string password = ConvertToUnsecureString(secure_password);
 
             // 使用密码，例如验证或其他操作
@@ -203,11 +207,6 @@ namespace LoCyanFrpDesktop
             }
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         // 将 SecureString 转化为 string
         private string ConvertToUnsecureString(SecureString securePassword)
         {
@@ -231,6 +230,61 @@ namespace LoCyanFrpDesktop
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Environment.Exit(0);
+        }
+        private void Register_Navigate(object sender, RequestNavigateEventArgs e)
+        {
+            var url = e.Uri.ToString();
+            Process.Start(new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            });
+            e.Handled = true;
+        }
+        private void ForgetPassword_Navigate(object sender, RequestNavigateEventArgs e)
+        {
+            var url = e.Uri.ToString();
+            Process.Start(new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            });
+            e.Handled = true;
+        }
+        private void UiWindow_Loaded(object sender, RoutedEventArgs e)
+        { /*
+            Catalog.Notification ??= new();
+            if (Global.Settings.Serein.ThemeFollowSystem)
+            {
+                Watcher.Watch(this, BackgroundType.Tabbed, true);
+            }
+            Theme.Apply(Global.Settings.Serein.UseDarkTheme ? ThemeType.Dark : ThemeType.Light);*/
+            Theme.Apply(ThemeType.Dark);
+        }
+        private void UiWindow_Closing(object sender, CancelEventArgs e)
+        {
+                e.Cancel = true;
+                ShowInTaskbar = false;
+                Hide();
+        }
+        private void UiWindow_StateChanged(object sender, EventArgs e)
+        {/*
+            MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+            MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth; */
+        }
+        private void UiWindow_ContentRendered(object sender, EventArgs e)
+        {
+
+        }
+        private void UiWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+            => ShowInTaskbar = IsVisible;
+        private void Hide_Click(object sender, RoutedEventArgs e)
+        {
+            ShowInTaskbar = false;
+            Hide();
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+                Close();
         }
     }
 
