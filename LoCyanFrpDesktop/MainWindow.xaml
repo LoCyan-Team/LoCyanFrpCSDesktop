@@ -8,22 +8,26 @@
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="LoCyanFrp-Desktop" Height="500" Width="900" 
+        Title="LoCyanFrp-Desktop" Height="500" Width="800" 
+    MinHeight="450"
+    MinWidth="800"
         Closing="UiWindow_Closing"
 ContentRendered="UiWindow_ContentRendered"
-ExtendsContentIntoTitleBar="True"
+
 Icon="/Resource/favicon.ico"
 IsVisibleChanged="UiWindow_IsVisibleChanged"
 Loaded="UiWindow_Loaded"
 AllowDrop="True"
+    ExtendsContentIntoTitleBar="True"
 StateChanged="UiWindow_StateChanged"
-Background="Transparent"
-WindowBackdropType="Mica"
-WindowCornerPreference="Round"
+    Style="{StaticResource UiWindow}"
 WindowStyle="None">
     <Grid>
+        <Grid.Resources>
+            <Color x:Key="ShadowColor"></Color>
+        </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ui:TitleBar
@@ -32,7 +36,6 @@ WindowStyle="None">
             Grid.Row="0"
             Margin="5,0,0,0"
             Padding="0"
-            Height="30"
             Icon="/Resource/favicon.ico">
             <ui:TitleBar.Tray>
                 <ui:NotifyIcon
@@ -64,14 +67,17 @@ WindowStyle="None">
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="1" >
                 <Grid Height="400" VerticalAlignment="center">
-                    <Grid Grid.Row="1" Grid.Column="1">
-                        <GroupBox Header="登录" FontSize="16">
-                            <Grid>
+                    <Border Name="MainForm" Background="Gray" CornerRadius="10">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{DynamicResource ShadowColor}" ShadowDepth="0" BlurRadius="20" Opacity="0.5"/>
+                        </Border.Effect>
+                        <Grid Opacity="1">
+                        <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="80"/>
                                     <RowDefinition Height="*"/>
-                                    <RowDefinition Height="220"/>
+                                    <RowDefinition Height="240"/>
                                     <RowDefinition Height="*" MinHeight="16"/>
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="1" Text="LocyanFrp" FontSize="48" HorizontalAlignment="Center"/>
@@ -82,11 +88,11 @@ WindowStyle="None">
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
                                     <GroupBox Grid.Row="0" Margin="20,0,20,10" Header="用户名" FontSize="12">
-                                        <TextBox Grid.Row="0" Margin="5" MinHeight="40" VerticalAlignment="Center" ToolTip="用户名" Name="Username"/>
+                                        <TextBox Grid.Row="0"  MinHeight="30" VerticalAlignment="Center" ToolTip="用户名" Name="Username"/>
                                     </GroupBox>
 
                                     <GroupBox Grid.Row="1" Margin="20,10" Header="密码" FontSize="12">
-                                        <PasswordBox Grid.Row="1" Margin="5" MinHeight="40" VerticalAlignment="Center" ToolTip="密码" Name="Password"/>
+                                        <PasswordBox Grid.Row="1" Margin="5" MinHeight="30" VerticalAlignment="Center" ToolTip="密码" Name="Password"/>
                                     </GroupBox>
 
                                     <ui:Button Grid.Row="2" Content="登录" Height="40" Width="200" VerticalAlignment="Center" HorizontalAlignment="Center" Name="_Login" Click="Login_Click"/>
@@ -110,8 +116,8 @@ WindowStyle="None">
                             </Grid>
 
 
-                        </GroupBox>
                     </Grid>
+                    </Border>
                 </Grid>
 
             </Grid>

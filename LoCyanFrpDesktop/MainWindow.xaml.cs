@@ -25,6 +25,8 @@ using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Appearance;
 using System.ComponentModel;
+using Microsoft.Win32;
+using System.Windows.Media.Effects;
 
 namespace LoCyanFrpDesktop
 {
@@ -45,6 +47,7 @@ namespace LoCyanFrpDesktop
             this.Icon = new BitmapImage(iconUri);
             InitializeAutoLaunch();
             InitializeAutoLogin();
+            DataContext = this;
         }
 
         private void InitializeAutoLaunch()
@@ -249,6 +252,18 @@ namespace LoCyanFrpDesktop
             });
             e.Handled = true;
         }
+        
+
+        public bool IsDarkThemeEnabled()
+        {
+        const string RegistryKey = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+
+        // 从注册表中获取“AppsUseLightTheme”值
+        int value = (int)Registry.GetValue(RegistryKey, "AppsUseLightTheme", 1);
+
+        // 如果值为0，则深色主题已启用
+        return value == 0;
+        }
         private void UiWindow_Loaded(object sender, RoutedEventArgs e)
         { /*
             Catalog.Notification ??= new();
@@ -257,8 +272,16 @@ namespace LoCyanFrpDesktop
                 Watcher.Watch(this, BackgroundType.Tabbed, true);
             }
             Theme.Apply(Global.Settings.Serein.UseDarkTheme ? ThemeType.Dark : ThemeType.Light);*/
-            Theme.Apply(ThemeType.Dark);
+            bool DarkThemeEnabled = IsDarkThemeEnabled();
+            Theme.Apply(DarkThemeEnabled ? ThemeType.Dark : ThemeType.Light, WindowBackdropType = BackgroundType.Mica);
+            
+            MainForm.Background = new SolidColorBrush(DarkThemeEnabled ? Colors.Gray : Colors.WhiteSmoke);
+            Color newColor = DarkThemeEnabled ? Colors.White : Colors.Gray;
+            Resources["ShadowColor"] = newColor;
+
         }
+
+
         private void UiWindow_Closing(object sender, CancelEventArgs e)
         {
                 e.Cancel = true;
