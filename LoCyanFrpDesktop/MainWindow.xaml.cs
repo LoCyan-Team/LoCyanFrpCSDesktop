@@ -230,10 +230,6 @@ namespace LoCyanFrpDesktop
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Environment.Exit(0);
-        }
         private void Register_Navigate(object sender, RequestNavigateEventArgs e)
         {
             var url = e.Uri.ToString();
@@ -264,7 +260,7 @@ namespace LoCyanFrpDesktop
         // 如果值为0，则深色主题已启用
         return value == 0;
         }
-        private void UiWindow_Loaded(object sender, RoutedEventArgs e)
+        public void UiWindow_Loaded(object sender, RoutedEventArgs e)
         { /*
             Catalog.Notification ??= new();
             if (Global.Settings.Serein.ThemeFollowSystem)
@@ -272,40 +268,41 @@ namespace LoCyanFrpDesktop
                 Watcher.Watch(this, BackgroundType.Tabbed, true);
             }
             Theme.Apply(Global.Settings.Serein.UseDarkTheme ? ThemeType.Dark : ThemeType.Light);*/
-            bool DarkThemeEnabled = IsDarkThemeEnabled();
+            //bool DarkThemeEnabled = IsDarkThemeEnabled();
+            bool DarkThemeEnabled = false;
             Theme.Apply(DarkThemeEnabled ? ThemeType.Dark : ThemeType.Light, WindowBackdropType = BackgroundType.Mica);
             
-            MainForm.Background = new SolidColorBrush(DarkThemeEnabled ? Colors.Gray : Colors.WhiteSmoke);
-            Color newColor = DarkThemeEnabled ? Colors.White : Colors.Gray;
+            MainForm.Background = new SolidColorBrush(DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke);
+            Color newColor = DarkThemeEnabled ? Colors.White : Colors.LightGray;
             Resources["ShadowColor"] = newColor;
 
         }
 
 
-        private void UiWindow_Closing(object sender, CancelEventArgs e)
+        public void UiWindow_Closing(object sender, CancelEventArgs e)
         {
                 e.Cancel = true;
                 ShowInTaskbar = false;
                 Hide();
         }
-        private void UiWindow_StateChanged(object sender, EventArgs e)
+        public void UiWindow_StateChanged(object sender, EventArgs e)
         {/*
             MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
             MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth; */
         }
-        private void UiWindow_ContentRendered(object sender, EventArgs e)
+        public void UiWindow_ContentRendered(object sender, EventArgs e)
         {
 
         }
-        private void UiWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        public void UiWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
             => ShowInTaskbar = IsVisible;
-        private void Hide_Click(object sender, RoutedEventArgs e)
+        public void Hide_Click(object sender, RoutedEventArgs e)
         {
             ShowInTaskbar = false;
             Hide();
         }
 
-        private void Exit_Click(object sender, RoutedEventArgs e)
+        public void Exit_Click(object sender, RoutedEventArgs e)
         {
                 Close();
         }

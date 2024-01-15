@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:hc="https://handyorg.github.io/handycontrol" 
-        x:Class="LoCyanFrpDesktop.MainWindow"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -88,11 +87,11 @@ WindowStyle="None">
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
                                     <GroupBox Grid.Row="0" Margin="20,0,20,10" Header="用户名" FontSize="12">
-                                        <TextBox Grid.Row="0"  MinHeight="30" VerticalAlignment="Center" ToolTip="用户名" Name="Username"/>
+                                        <ui:TextBox Foreground="Black" Grid.Row="0"  MinHeight="30" VerticalAlignment="Center" ToolTip="用户名" Name="Username"/>
                                     </GroupBox>
 
                                     <GroupBox Grid.Row="1" Margin="20,10" Header="密码" FontSize="12">
-                                        <PasswordBox Grid.Row="1" Margin="5" MinHeight="30" VerticalAlignment="Center" ToolTip="密码" Name="Password"/>
+                                        <PasswordBox Foreground="Black" Grid.Row="1" Margin="5" MinHeight="30" VerticalAlignment="Center" ToolTip="密码" Name="Password"/>
                                     </GroupBox>
 
                                     <ui:Button Grid.Row="2" Content="登录" Height="40" Width="200" VerticalAlignment="Center" HorizontalAlignment="Center" Name="_Login" Click="Login_Click"/>

@@ -16,19 +16,24 @@ using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Windows.Forms;
 using System.Diagnostics;
+using Wpf.Ui.Controls;
+using LoCyanFrpDesktop;
+using System.ComponentModel;
 
 namespace LoCyanFrpDesktop
 {
     /// <summary>
     /// DashBoard.xaml 的交互逻辑
     /// </summary>
-    public partial class DashBoard : Window
+    public partial class DashBoard : UiWindow
     {
         public ObservableCollection<string> Proxies { get; set; }
 
         public List<Proxy> Proxieslist { get; set; }
 
         public string SelectedProxy { get; set; }
+
+        MainWindow MainWindow = new MainWindow();
         /// <summary>
         /// 
         /// </summary>
@@ -37,7 +42,7 @@ namespace LoCyanFrpDesktop
             InitializeComponent();
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = new BitmapImage(iconUri);
-            title_username.Content = Properties.Settings.Default.username;
+            title_username.Text = $"欢迎回来，{Properties.Settings.Default.username}" ;
             InitializeProxiesAsync();
         }
 
@@ -197,6 +202,31 @@ namespace LoCyanFrpDesktop
 
             // 创建一个 Process 对象并启动进程
             Process.Start(psi);
+        }
+        private void UiWindow_Closing(object sender, CancelEventArgs e)
+        {
+            MainWindow.UiWindow_Closing(sender,e);
+        }
+        public void UiWindow_StateChanged(object sender, EventArgs e)
+        {/*
+            MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+            MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth; */
+        }
+        public void UiWindow_ContentRendered(object sender, EventArgs e)
+        {
+
+        }
+        public void UiWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+            => ShowInTaskbar = IsVisible;
+        public void Hide_Click(object sender, RoutedEventArgs e)
+        {
+            ShowInTaskbar = false;
+            Hide();
+        }
+
+        public void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }
