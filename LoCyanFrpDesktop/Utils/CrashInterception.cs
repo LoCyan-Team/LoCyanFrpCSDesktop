@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using System.IO;
 using Ookii.Dialogs.Wpf;
 using System.Windows.Media.Animation;
-using LoCyanFrpDesktop.Global;
 
 namespace LoCyanFrpDesktop.Utils
 {
@@ -46,7 +45,7 @@ namespace LoCyanFrpDesktop.Utils
                 MainInstruction = "唔……发生了一点小问题(っ °Д °;)っ",
                 WindowTitle = "Serein",
                 Content = "" +
-                    $"版本： {Global.Global.Version} - {Global.Global.Branch}\n" +
+                    $"版本： {Global.Version} - {Global.Branch}\n" +
                     $"时间：{DateTime.Now}\n" +
                     $"NET版本：{Environment.Version}\n\n" +
                     $"◦ 崩溃日志已保存在 {Path.Combine("logs", "crash", $"{DateTime.Now:yyyy-MM-dd}.log")}\n" +

@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace LoCyanFrpDesktop.Dashboard
 {
     /// <summary>
-    /// Interaction logic for Info.xaml
+    /// Interaction logic for Status.xaml
     /// </summary>
-    public partial class Info : Page
+    public partial class Status : Page
     {
-        public Info()
+        public Status()
         {
             InitializeComponent();
         }

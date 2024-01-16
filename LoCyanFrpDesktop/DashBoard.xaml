@@ -9,20 +9,20 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="LoCyanFrp - DashBoard [用户界面]"
-Height="500" Width="800" 
-    MinHeight="450"
-    MinWidth="800"
+        Height="500" Width="800" 
+        MinHeight="450"
+        MinWidth="800"
         Closing="UiWindow_Closing"
-ContentRendered="UiWindow_ContentRendered"
+        ContentRendered="UiWindow_ContentRendered"
 
-Icon="/Resource/favicon.ico"
-IsVisibleChanged="UiWindow_IsVisibleChanged"
-Loaded="UiWindow_Loaded"
-AllowDrop="True"
-    ExtendsContentIntoTitleBar="True"
-StateChanged="UiWindow_StateChanged"
-    Style="{StaticResource UiWindow}"
-WindowStyle="None">
+        Icon="/Resource/favicon.ico"
+        IsVisibleChanged="UiWindow_IsVisibleChanged"
+        Loaded="UiWindow_Loaded"
+        AllowDrop="True"
+        ExtendsContentIntoTitleBar="True"
+        StateChanged="UiWindow_StateChanged"
+        Style="{StaticResource UiWindow}"
+        WindowStyle="None">
 
     <Grid>
         <Grid.Resources>
@@ -34,29 +34,29 @@ WindowStyle="None">
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ui:TitleBar
-    x:Name="_TitleBar"
-    Title="LoCyanFrp - DashBoard [用户界面]"
-    Grid.Row="0"
-    Margin="5,0,0,0"
-    Padding="0"
-    Icon="/Resource/favicon.ico">
+            x:Name="_TitleBar"
+            Title="LoCyanFrp - DashBoard [用户界面]"
+            Grid.Row="0"
+            Margin="5,0,0,0"
+            Padding="0"
+            Icon="/Resource/favicon.ico">
             <ui:TitleBar.Tray>
                 <ui:NotifyIcon
- x:Name="NotifyIcon"
- FocusOnLeftClick="True"
- Icon="/Resource/favicon.ico"
- MenuOnRightClick="True">
+                    x:Name="NotifyIcon"
+                    FocusOnLeftClick="True"
+                    Icon="/Resource/favicon.ico"
+                    MenuOnRightClick="True">
                     <ui:NotifyIcon.Menu>
                         <ContextMenu>
                             <ui:MenuItem
-             Click="Hide_Click"
-             Header="隐藏窗口"
-             SymbolIcon="SlideHide24" />
+                                Click="Hide_Click"
+                                Header="隐藏窗口"
+                                SymbolIcon="SlideHide24" />
 
                             <ui:MenuItem
-             Click="Exit_Click"
-             Header="退出"
-             SymbolIcon="ArrowExit20" />
+                                Click="Exit_Click"
+                                Header="退出"
+                                SymbolIcon="ArrowExit20" />
                         </ContextMenu>
                     </ui:NotifyIcon.Menu>
                 </ui:NotifyIcon>
@@ -80,8 +80,19 @@ WindowStyle="None">
                             PageTag="ProxyList"
                             PageType="{x:Type Dashboard:ProxyList}" />
                     <ui:NavigationSeparator />
-                        
+                    <ui:NavigationItem
+                        Content="运行状态"
+                        Icon="WindowConsole20"
+                        PageTag="ProxyStatus"
+                        PageType="{x:Type Dashboard:Status}"/>
                 </ui:NavigationStore.Items>
+                <ui:NavigationStore.Footer>
+                    <ui:NavigationItem
+                        x:Name="SettingsNavigationItem"
+                        Content="设置"
+                        Icon="Settings24"
+                        PageType="{x:Type Dashboard:Settings}" />
+                </ui:NavigationStore.Footer>
             </ui:NavigationStore>
             <Border
                 Grid.Column="1"

@@ -29,7 +29,7 @@
                     <DropShadowEffect Color="{DynamicResource ShadowColor}" ShadowDepth="0" BlurRadius="20" Opacity="0.5"/>
                 </Border.Effect>
             </Border>
-            <ListView Name="proxies_list"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" ContextMenuOpening="ListView_ContextMenuOpening" MouseDown="PlayerListView_MouseDown">
+            <ListView Name="proxies_list"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" ContextMenuOpening="ListView_ContextMenuOpening" MouseDown="ListView_MouseDown">
                 
             </ListView>
         </Grid>
