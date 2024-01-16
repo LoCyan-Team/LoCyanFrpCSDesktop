@@ -27,6 +27,7 @@ using Wpf.Ui.Appearance;
 using System.ComponentModel;
 using Microsoft.Win32;
 using System.Windows.Media.Effects;
+using LoCyanFrpDesktop.Utils;
 
 namespace LoCyanFrpDesktop
 {
@@ -35,7 +36,7 @@ namespace LoCyanFrpDesktop
     /// </summary>
     public partial class MainWindow : UiWindow
     {
-
+        public static bool DarkThemeEnabled;
         private InfoResponseObjectt UserInfo;
         string username_auto;
         string token_auto;
@@ -48,6 +49,7 @@ namespace LoCyanFrpDesktop
             InitializeAutoLaunch();
             InitializeAutoLogin();
             DataContext = this;
+            CrashInterception.Init();
         }
 
         private void InitializeAutoLaunch()
@@ -269,7 +271,7 @@ namespace LoCyanFrpDesktop
             }
             Theme.Apply(Global.Settings.Serein.UseDarkTheme ? ThemeType.Dark : ThemeType.Light);*/
             //bool DarkThemeEnabled = IsDarkThemeEnabled();
-            bool DarkThemeEnabled = false;
+            DarkThemeEnabled = false;
             Theme.Apply(DarkThemeEnabled ? ThemeType.Dark : ThemeType.Light, WindowBackdropType = BackgroundType.Mica);
             
             MainForm.Background = new SolidColorBrush(DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke);

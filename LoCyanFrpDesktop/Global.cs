@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace LoCyanFrpDesktop.Global
 {
-    class Global
+    internal static class Global
     {   
         public const string Version = "2.0.0";
         public const string Branch = "Alpha";
         public const int Revision = 1;
-        public Global() { 
         
-        }
     }
 }
