@@ -29,8 +29,12 @@
                     <DropShadowEffect Color="{DynamicResource ShadowColor}" ShadowDepth="0" BlurRadius="20" Opacity="0.5"/>
                 </Border.Effect>
             </Border>
-            <ListView Name="proxies_list"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" ContextMenuOpening="ListView_ContextMenuOpening" MouseDown="ListView_MouseDown">
-                
+            <ListView ItemsSource="{Binding Proxies}" SelectionChanged="Proxies_List_SelectionChanged" Name="proxies_list"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" ContextMenuOpening="ListView_ContextMenuOpening" MouseDown="ListView_MouseDown">
+                <ListView.ContextMenu>
+                    <ContextMenu Name="ListMenu">
+                        <ui:MenuItem />
+                    </ContextMenu>
+                </ListView.ContextMenu>
             </ListView>
         </Grid>
     </Grid>

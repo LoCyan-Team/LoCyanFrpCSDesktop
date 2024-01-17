@@ -200,5 +200,13 @@ namespace LoCyanFrpDesktop.Dashboard
             // 创建一个 Process 对象并启动进程
             Process.Start(psi);
         }
+        private void ListView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+
+        }
+        private void ListView_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
     }
 }
