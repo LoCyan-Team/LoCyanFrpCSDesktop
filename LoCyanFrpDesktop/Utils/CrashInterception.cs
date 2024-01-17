@@ -43,15 +43,15 @@ namespace LoCyanFrpDesktop.Utils
             {
                 Buttons = { new(ButtonType.Ok) },
                 MainInstruction = "唔……发生了一点小问题(っ °Д °;)っ",
-                WindowTitle = "Serein",
+                WindowTitle = "LocyanFrp",
                 Content = "" +
                     $"版本： {Global.Version} - {Global.Branch}\n" +
                     $"时间：{DateTime.Now}\n" +
                     $"NET版本：{Environment.Version}\n\n" +
                     $"◦ 崩溃日志已保存在 {Path.Combine("logs", "crash", $"{DateTime.Now:yyyy-MM-dd}.log")}\n" +
-                    $"◦ 反馈此问题可以帮助作者更好的改进Serein",
+                    $"◦ 反馈此问题可以帮助作者更好的改进LocyanFrp",
                 MainIcon = Ookii.Dialogs.Wpf.TaskDialogIcon.Error,
-                Footer = $"你可以<a href=\"https://github.com/崩溃反馈+{e.GetType()}\">提交Issue</a>",
+                Footer = $"你可以<a href=\"https://github.com/LoCyan-Team/LoCyanFrpCSDesktop/崩溃反馈+{e.GetType()}\">提交Issue</a>",
                 FooterIcon = Ookii.Dialogs.Wpf.TaskDialogIcon.Information,
                 EnableHyperlinks = true,
                 ExpandedInformation = exceptionMsg
