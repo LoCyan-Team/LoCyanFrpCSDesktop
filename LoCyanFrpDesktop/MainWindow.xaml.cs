@@ -270,8 +270,8 @@ namespace LoCyanFrpDesktop
                 Watcher.Watch(this, BackgroundType.Tabbed, true);
             }
             Theme.Apply(Global.Settings.Serein.UseDarkTheme ? ThemeType.Dark : ThemeType.Light);*/
-            //bool DarkThemeEnabled = IsDarkThemeEnabled();
-            DarkThemeEnabled = false;
+            DarkThemeEnabled = IsDarkThemeEnabled();
+            //DarkThemeEnabled = false;
             Theme.Apply(DarkThemeEnabled ? ThemeType.Dark : ThemeType.Light, WindowBackdropType = BackgroundType.Mica);
             
             MainForm.Background = new SolidColorBrush(DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke);

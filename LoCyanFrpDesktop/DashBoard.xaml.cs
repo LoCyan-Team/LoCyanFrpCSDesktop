@@ -71,7 +71,7 @@ namespace LoCyanFrpDesktop
         public void UiWindow_Loaded(object sender, EventArgs e)
         {
             Resources["ShadowColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray; ;
-            Resources["MainBackgroundColor"] = MainWindow.DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke;
+            Resources["MainBackgroundColor"] = new SolidColorBrush(MainWindow.DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +18,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Wpf.Ui.Controls;
+using LoCyanFrpDesktop.Utils;
+using LoCyanFrpDesktop.Dashboard;
+using System.Windows.Threading;
 
 namespace LoCyanFrpDesktop.Dashboard
 {
@@ -30,30 +34,31 @@ namespace LoCyanFrpDesktop.Dashboard
         public List<Proxy> Proxieslist { get; set; }
 
         public string SelectedProxy { get; set; }
+        public static string lineFiltered;
         public ProxyList()
         {
             InitializeComponent();
             InitializeProxiesAsync();
+            DataContext = this;
             title_username.Text = $"欢迎回来，{Properties.Settings.Default.username}";
-            Resources["ShadowColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray; ;
-            Resources["MainBackgroundColor"] = MainWindow.DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke;
+            Resources["BorderColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray;
         }
 
         private async void InitializeProxiesAsync()
         {
-            Proxies = await GetProxiesListAsync();
+            await GetProxiesListAsync();
             // 若返回 null，则表示无隧道或请求失败
             if (Proxies == null)
             {
                 Proxies = new ObservableCollection<string>();
             }
-
+            /*
             // 使用 await 关键字确保数据加载完成后再更新 DataContext
             await Dispatcher.InvokeAsync(() =>
             {
                 proxies_list.DataContext = this;
             });
-            proxies_list.Items.Refresh();
+            proxies_list.Items.Refresh();*/
         }
 
         // 封装隧道获取，采用异步请求防止主线程卡死
@@ -103,7 +108,10 @@ namespace LoCyanFrpDesktop.Dashboard
             }
 
             Proxieslist = responseObject.Proxies;
-
+            Dispatcher.Invoke(() =>
+            {
+                proxies_list.ItemsSource = Proxieslist;
+            });
             var proxies = new ObservableCollection<string>(proxiesListInName);
             return proxies;
         }
@@ -138,6 +146,10 @@ namespace LoCyanFrpDesktop.Dashboard
 
             [JsonProperty("icp")]
             public object Icp { get; set; } // icp 字段可能为 null，使用 object 类型表示
+            public override string ToString()
+            {
+                return $"{this.ProxyName} {ProxyType} {LocalIp}:{LocalPort}-->{Domain}:{RemotePort}";
+            }
         }
 
         public class GetProxiesResponseObject
@@ -177,7 +189,7 @@ namespace LoCyanFrpDesktop.Dashboard
             // 如果需要判断是否有选中项
             if (proxies_list.SelectedItem != null)
             {
-                SelectedProxy = proxies_list.SelectedItem as string;
+                SelectedProxy = Proxieslist[proxies_list.SelectedIndex].ProxyName;
             }
             else
             {
@@ -193,18 +205,68 @@ namespace LoCyanFrpDesktop.Dashboard
                 FileName = "cmd.exe", // 指定要运行的命令行程序
                 Arguments = "/k " + command, // 使用 /k 参数保持 cmd 窗口打开，显示输出内容
                 Verb = "runas",
-                UseShellExecute = true, // 设置为 true 以便在新窗口中显示命令行窗口
-                CreateNoWindow = false // 设置为 false 以显示命令行窗口
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false, // 设置为 true 以便在新窗口中显示命令行窗口
+                CreateNoWindow = true // 设置为 false 以显示命令行窗口
             };
+                // 启动进程
+                Process _serverProcess = Process.Start(psi);
+                _serverProcess.BeginOutputReadLine();
+                _serverProcess.OutputDataReceived += SortOutputHandler;
+                // 读取标准输出和标准错误输出
+                //string output = process.StandardOutput.ReadToEnd(); 
+                //string error = process.StandardError.ReadToEnd();
+                
+            // 等待进程完成
+            //process.WaitForExit();
 
-            // 创建一个 Process 对象并启动进程
-            Process.Start(psi);
+            // 打印输出
+            //Console.WriteLine("Output:\n" + output);
+            //Console.WriteLine("Error:\n" + error);
+
+            // 可以将输出存储到变量中，以便后续处理
+            // string combinedOutput = output + error;
+
         }
-        private void ListView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        private static void SortOutputHandler(object sender, DataReceivedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                lineFiltered = LogPreProcess.Filter(e.Data);
+                
+                
+                
+            }
+            }
+
+            private void ListView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
 
         }
         private void ListView_MouseDown(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void StartProxy_Click(object sender, RoutedEventArgs e)
+        {
+            Button_Click(sender, e);
+        }
+        private void StopProxy_Click(Object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DeleteProxy_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void CreateNewProxy_Click(object sender,RoutedEventArgs e)
         {
 
         }
