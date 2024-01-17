@@ -49,7 +49,6 @@ namespace LoCyanFrpDesktop
             InitializeAutoLaunch();
             InitializeAutoLogin();
             DataContext = this;
-            CrashInterception.Init();
         }
 
         private void InitializeAutoLaunch()

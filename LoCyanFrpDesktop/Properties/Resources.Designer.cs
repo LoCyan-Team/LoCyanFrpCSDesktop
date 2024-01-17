@@ -38,7 +38,7 @@ namespace LoCyanFrpDesktop.Properties
         ///   返回此类使用的缓存 ResourceManager 实例。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager
+        public static global::System.Resources.ResourceManager ResourceManager
         {
             get
             {
@@ -65,6 +65,13 @@ namespace LoCyanFrpDesktop.Properties
             set
             {
                 resourceCulture = value;
+            }
+        }
+        public static string buildinfo
+        {
+            get
+            {
+                return ResourceManager.GetString("BuildInfo", resourceCulture);
             }
         }
     }

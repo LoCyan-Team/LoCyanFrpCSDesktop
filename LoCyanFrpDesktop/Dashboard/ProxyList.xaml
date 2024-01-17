@@ -27,6 +27,13 @@
                 <RowDefinition Height="100"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="2">
+                <Border
+                Grid.Column="1"
+                Margin="0"
+                Padding="10,5"
+                Background="{DynamicResource ControlFillColorDefaultBrush}"
+                CornerRadius="8">
+                
                 <ListView SelectionChanged="Proxies_List_SelectionChanged" Name="proxies_list"  HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10" ContextMenuOpening="ListView_ContextMenuOpening" MouseDown="ListView_MouseDown">
                     <ListView.ContextMenu>
                         <ContextMenu Name="ListMenu">
@@ -40,7 +47,7 @@
                         </ContextMenu>
                     </ListView.ContextMenu>
                 </ListView>
-                
+                </Border>
             </Grid>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>

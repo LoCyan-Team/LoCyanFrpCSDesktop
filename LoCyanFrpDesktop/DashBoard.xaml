@@ -70,7 +70,7 @@
             <ui:NavigationStore 
                 x:Name="Navigation"
                 Grid.Column="0"
-                Margin="6,0,6,0"
+                Margin="6,0,6,9"
                 Frame="{Binding ElementName=RootFrame}"
                 SelectedPageIndex="0">
                 <ui:NavigationStore.Items>

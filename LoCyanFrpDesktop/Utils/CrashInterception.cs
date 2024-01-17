@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.IO;
 using Ookii.Dialogs.Wpf;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace LoCyanFrpDesktop.Utils
 {
@@ -21,12 +22,18 @@ namespace LoCyanFrpDesktop.Utils
             AppDomain.CurrentDomain.UnhandledException += (_, e) => ShowException((Exception)e.ExceptionObject);
             TaskScheduler.UnobservedTaskException += (_, e) => ShowException(e.Exception);
         }
-        public static void CreateDirectory(string path)
+        
+            public static void CreateDirectory(string path)
         {
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
+        }
+        public static class FileLock
+        {
+            public static readonly object
+                Crash = new();
         }
         /// <summary>
         /// 显示错误消息
@@ -37,7 +44,26 @@ namespace LoCyanFrpDesktop.Utils
 
             CreateDirectory(Path.Combine("logs", "crash"));
             string exceptionMsg = MergeException(e);
-
+            try
+            {
+                lock (FileLock.Crash)
+                {
+                    File.AppendAllText(
+                        Path.Combine("logs", "crash", $"{DateTime.Now:yyyy-MM-dd}.log"),
+                        DateTime.Now + "  |  "
+                        + $"{Global.Version} - {Global.Branch}" + "  |  " +
+                        "NET" + Environment.Version.ToString() +
+                        Environment.NewLine +
+                        exceptionMsg +
+                        Environment.NewLine + Environment.NewLine,
+                        Encoding.UTF8
+                    );
+                }
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine(exception);
+            }
 
             Ookii.Dialogs.Wpf.TaskDialog taskDialog = new()
             {
@@ -58,7 +84,7 @@ namespace LoCyanFrpDesktop.Utils
             };
             taskDialog.HyperlinkClicked += (_, e) => Process.Start(new ProcessStartInfo(e.Href) { UseShellExecute = true });
             taskDialog.ShowDialog();
-
+            
         }
 
         /// <summary>
