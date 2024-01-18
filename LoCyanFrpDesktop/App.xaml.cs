@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.IO;
+using LoCyanFrpDesktop.Utils;
+using System.Windows.Threading;
 
 namespace LoCyanFrpDesktop
 {
@@ -14,11 +16,15 @@ namespace LoCyanFrpDesktop
     /// App.xaml 的交互逻辑
     /// </summary>
     public partial class App : Application
-    {
+    {   
         protected override void OnStartup(StartupEventArgs e)
         {
+            CrashInterception.Init();
             base.OnStartup(e);
 
+            DispatcherUnhandledException += CurrentDomain_UnhandledException;
+            DispatcherUnhandledException += (_, e) => CrashInterception.ShowException(e.Exception);
+            
             // 处理启动参数
             string[] args = e.Args;
             if (args.Length > 0)
@@ -28,7 +34,10 @@ namespace LoCyanFrpDesktop
                 ProcessUrlParameters(args);
             }
         }
-
+        private static void CurrentDomain_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+        }
         private void ProcessUrlParameters(string[] args)
         {
             string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);

@@ -21,15 +21,22 @@ using System.Text.RegularExpressions;
 using Path = System.IO.Path;
 using System.Security;
 using MessageBox = HandyControl.Controls.MessageBox;
+using Wpf.Ui.Common;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Appearance;
+using System.ComponentModel;
+using Microsoft.Win32;
+using System.Windows.Media.Effects;
+using LoCyanFrpDesktop.Utils;
 
 namespace LoCyanFrpDesktop
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : UiWindow
     {
-
+        public static bool DarkThemeEnabled;
         private InfoResponseObjectt UserInfo;
         string username_auto;
         string token_auto;
@@ -41,6 +48,7 @@ namespace LoCyanFrpDesktop
             this.Icon = new BitmapImage(iconUri);
             InitializeAutoLaunch();
             InitializeAutoLogin();
+            DataContext = this;
         }
 
         private void InitializeAutoLaunch()
@@ -141,10 +149,10 @@ namespace LoCyanFrpDesktop
             }
         }
 
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void Login_Click(object sender, RoutedEventArgs e)
         {
-            string username = txtusername.Text;
-            SecureString secure_password = txtpassword.SecurePassword;
+            string username = Username.Text;
+            SecureString secure_password = Password.SecurePassword;
             string password = ConvertToUnsecureString(secure_password);
 
             // 使用密码，例如验证或其他操作
@@ -203,11 +211,6 @@ namespace LoCyanFrpDesktop
             }
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         // 将 SecureString 转化为 string
         private string ConvertToUnsecureString(SecureString securePassword)
         {
@@ -228,9 +231,81 @@ namespace LoCyanFrpDesktop
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Register_Navigate(object sender, RequestNavigateEventArgs e)
         {
-            Environment.Exit(0);
+            var url = e.Uri.ToString();
+            Process.Start(new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            });
+            e.Handled = true;
+        }
+        private void ForgetPassword_Navigate(object sender, RequestNavigateEventArgs e)
+        {
+            var url = e.Uri.ToString();
+            Process.Start(new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            });
+            e.Handled = true;
+        }
+        
+
+        public bool IsDarkThemeEnabled()
+        {
+        const string RegistryKey = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+
+        // 从注册表中获取“AppsUseLightTheme”值
+        int value = (int)Registry.GetValue(RegistryKey, "AppsUseLightTheme", 1);
+
+        // 如果值为0，则深色主题已启用
+        return value == 0;
+        }
+        public void UiWindow_Loaded(object sender, RoutedEventArgs e)
+        { /*
+            Catalog.Notification ??= new();
+            if (Global.Settings.Serein.ThemeFollowSystem)
+            {
+                Watcher.Watch(this, BackgroundType.Tabbed, true);
+            }
+            Theme.Apply(Global.Settings.Serein.UseDarkTheme ? ThemeType.Dark : ThemeType.Light);*/
+            DarkThemeEnabled = IsDarkThemeEnabled();
+            //DarkThemeEnabled = false;
+            Theme.Apply(DarkThemeEnabled ? ThemeType.Dark : ThemeType.Light, WindowBackdropType = BackgroundType.Mica);
+            
+            MainForm.Background = new SolidColorBrush(DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke);
+            Color newColor = DarkThemeEnabled ? Colors.White : Colors.LightGray;
+            Resources["ShadowColor"] = newColor;
+
+        }
+
+
+        public void UiWindow_Closing(object sender, CancelEventArgs e)
+        {
+                e.Cancel = true;
+                ShowInTaskbar = false;
+                Hide();
+        }
+        public void UiWindow_StateChanged(object sender, EventArgs e)
+        {/*
+            MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
+            MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth; */
+        }
+        public void UiWindow_ContentRendered(object sender, EventArgs e)
+        {
+
+        }
+        public void UiWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+            => ShowInTaskbar = IsVisible;
+        public void Hide_Click(object sender, RoutedEventArgs e)
+        {
+            ShowInTaskbar = false;
+            Hide();
+        }
+
+        public void Exit_Click(object sender, RoutedEventArgs e)
+        {
+                Close();
         }
     }
 
