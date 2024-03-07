@@ -15,6 +15,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 using LoCyanFrpDesktop.Dashboard;
+using System.Windows.Forms;
+using static System.Windows.Forms.LinkLabel;
+using System.Windows.Threading;
 
 namespace LoCyanFrpDesktop.Dashboard
 {
@@ -23,10 +26,18 @@ namespace LoCyanFrpDesktop.Dashboard
     /// </summary>
     public partial class Status : UiPage
     {
+        
         public Status()
         {
             InitializeComponent();
-            Append(LogPreProcess.Color(LogType.Info, ProxyList.lineFiltered));
+            Access.Status = this;
+            lock (LogPreProcess.Process.Cache)
+            {
+                LogPreProcess.Process.Cache.ForEach(
+                    (line) => Dispatcher.Invoke(() => Append(LogPreProcess.Color(line)))
+                );
+            }
+            //Append(LogPreProcess.Color(LogType.Info, ProxyList.lineFiltered));
         }
         public void Append(Paragraph paragraph)
         {
@@ -42,5 +53,6 @@ namespace LoCyanFrpDesktop.Dashboard
             }, System.Windows.Threading.DispatcherPriority.Background);
 
         }
+        
     }
 }

@@ -12,7 +12,11 @@ using RegExp = System.Text.RegularExpressions;
 namespace LoCyanFrpDesktop.Utils
 {
     internal static class LogPreProcess
-    {
+    {   
+        public static class Process
+        {
+            public static List<(LogType, string)> Cache = new();
+        }
         public static string Filter(string input)
         {
             string result = RegExp.Regex.Replace(input, @"\x1b\[.*?m", string.Empty);

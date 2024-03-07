@@ -40,27 +40,7 @@
             Margin="5,0,0,0"
             Padding="0"
             Icon="/Resource/favicon.ico">
-            <ui:TitleBar.Tray>
-                <ui:NotifyIcon
-                    x:Name="NotifyIcon"
-                    FocusOnLeftClick="True"
-                    Icon="/Resource/favicon.ico"
-                    MenuOnRightClick="True">
-                    <ui:NotifyIcon.Menu>
-                        <ContextMenu>
-                            <ui:MenuItem
-                                Click="Hide_Click"
-                                Header="隐藏窗口"
-                                SymbolIcon="SlideHide24" />
-
-                            <ui:MenuItem
-                                Click="Exit_Click"
-                                Header="退出"
-                                SymbolIcon="ArrowExit20" />
-                        </ContextMenu>
-                    </ui:NotifyIcon.Menu>
-                </ui:NotifyIcon>
-            </ui:TitleBar.Tray>
+            
         </ui:TitleBar>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

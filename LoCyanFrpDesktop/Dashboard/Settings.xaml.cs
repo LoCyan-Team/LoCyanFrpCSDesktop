@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,20 @@ namespace LoCyanFrpDesktop.Dashboard
             _Developer.Text = $"开发者: {Global.Developer}";
             _Copyright.Text = Global.Copyright;
             
+        }
+        public void Select_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new()
+            {
+                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
+                Filter = "支持的文件(frpc.exe)|frpc.exe"
+            };
+            if (dialog.ShowDialog() ?? false)
+            {
+                FrpcPath.Text = dialog.FileName;
+                Properties.Settings.Default.FrpcPath = FrpcPath.Text;
+
+            }
         }
     }
 }
