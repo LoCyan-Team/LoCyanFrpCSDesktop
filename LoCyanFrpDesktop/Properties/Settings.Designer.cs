@@ -58,5 +58,17 @@ namespace LoCyanFrpDesktop.Properties {
                 this["FrpToken"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string FrpcPath {
+            get {
+                return ((string)(this["FrpcPath"]));
+            }
+            set {
+                this["FrpcPath"] = value;
+            }
+        }
     }
 }

@@ -38,10 +38,11 @@
             Icon="/Resource/favicon.ico">
             <ui:TitleBar.Tray>
                 <ui:NotifyIcon
-         x:Name="NotifyIcon"
-         FocusOnLeftClick="True"
-         Icon="/Resource/favicon.ico"
-         MenuOnRightClick="True">
+                    x:Name="NotifyIcon"
+                    Icon="/Resource/favicon.ico"
+                    MenuOnRightClick="True"
+                    FocusOnLeftClick="False"
+                    LeftClick="NotifyIcon_LeftClick">
                     <ui:NotifyIcon.Menu>
                         <ContextMenu>
                             <ui:MenuItem

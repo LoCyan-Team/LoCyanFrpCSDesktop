@@ -16,11 +16,12 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 using LoCyanFrpDesktop.Utils;
 using LoCyanFrpDesktop.Dashboard;
 using System.Windows.Threading;
+using System.Text.RegularExpressions;
+using System.IO;
 
 namespace LoCyanFrpDesktop.Dashboard
 {
@@ -39,6 +40,7 @@ namespace LoCyanFrpDesktop.Dashboard
         {
             InitializeComponent();
             InitializeProxiesAsync();
+            InitializeAutoLaunch();
             DataContext = this;
             title_username.Text = $"欢迎回来，{Properties.Settings.Default.username}";
             Resources["BorderColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray;
@@ -178,9 +180,8 @@ namespace LoCyanFrpDesktop.Dashboard
                 System.Windows.Forms.MessageBox.Show("无法将隧道名解析为隧道ID，请检查自己的隧道配置", "警告");
                 return;
             }
-
             // 运行frp
-            RunCmdCommand($"frpc.exe -u {Properties.Settings.Default.FrpToken} -p {proxy_id}");
+            RunCmdCommand($" -u {Properties.Settings.Default.FrpToken} -p {proxy_id}");
 
         }
 
@@ -202,22 +203,22 @@ namespace LoCyanFrpDesktop.Dashboard
             // 创建一个 ProcessStartInfo 对象
             ProcessStartInfo psi = new ProcessStartInfo
             {
-                FileName = "cmd.exe", // 指定要运行的命令行程序
-                Arguments = "/k " + command, // 使用 /k 参数保持 cmd 窗口打开，显示输出内容
+                FileName = Properties.Settings.Default.FrpcPath, // 指定要运行的命令行程序
+                Arguments = command, // 使用 /k 参数保持 cmd 窗口打开，显示输出内容
                 Verb = "runas",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false, // 设置为 true 以便在新窗口中显示命令行窗口
                 CreateNoWindow = true // 设置为 false 以显示命令行窗口
             };
-                // 启动进程
-                Process _serverProcess = Process.Start(psi);
-                _serverProcess.BeginOutputReadLine();
-                _serverProcess.OutputDataReceived += SortOutputHandler;
-                // 读取标准输出和标准错误输出
-                //string output = process.StandardOutput.ReadToEnd(); 
-                //string error = process.StandardError.ReadToEnd();
-                
+            // 启动进程
+            Process _serverProcess = Process.Start(psi);
+            _serverProcess.BeginOutputReadLine();
+            _serverProcess.OutputDataReceived += SortOutputHandler;
+            // 读取标准输出和标准错误输出
+            //string output = process.StandardOutput.ReadToEnd(); 
+            //string error = process.StandardError.ReadToEnd();
+
             // 等待进程完成
             //process.WaitForExit();
 
@@ -234,13 +235,11 @@ namespace LoCyanFrpDesktop.Dashboard
             if (!string.IsNullOrEmpty(e.Data))
             {
                 lineFiltered = LogPreProcess.Filter(e.Data);
-                
-                
-                
             }
-            }
+        }
 
-            private void ListView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+
+        private void ListView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
 
         }
@@ -266,8 +265,34 @@ namespace LoCyanFrpDesktop.Dashboard
         {
 
         }
-        private void CreateNewProxy_Click(object sender,RoutedEventArgs e)
+        private void CreateNewProxy_Click(object sender, RoutedEventArgs e)
         {
+
+        }
+        private void InitializeAutoLaunch()
+        {
+            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filePath = Path.Combine(documentsPath, "auto_launch.ini");
+
+            if (File.Exists(filePath))
+            {
+                string url = File.ReadAllText(filePath);
+
+                // 使用正则表达式提取token和id
+                Match match = Regex.Match(url, @"locyanfrp://([^/]+)/([^/]+)");
+
+                if (match.Success && match.Groups.Count == 3)
+                {
+                    string token = match.Groups[1].Value;
+                    string id = match.Groups[2].Value;
+                    RunCmdCommand($" -u {token} -p {id}");
+                    File.Delete(filePath);
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show($"自动启动出错 \n url: {url} \n filepath: {filePath}", "警告");
+                }
+            }
 
         }
     }

@@ -28,6 +28,7 @@ using System.ComponentModel;
 using Microsoft.Win32;
 using System.Windows.Media.Effects;
 using LoCyanFrpDesktop.Utils;
+using HandyControl.Tools.Extension;
 
 namespace LoCyanFrpDesktop
 {
@@ -40,70 +41,39 @@ namespace LoCyanFrpDesktop
         private InfoResponseObjectt UserInfo;
         string username_auto;
         string token_auto;
-
+        private static bool islogin = false;
+        public static DashBoard DashBoard;
+        public static Snackbar Snackbar = new Snackbar();
         public MainWindow()
         {
+            
             InitializeComponent();
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = new BitmapImage(iconUri);
-            InitializeAutoLaunch();
             InitializeAutoLogin();
             DataContext = this;
+            Access.MainWindow = this;
         }
 
-        private void InitializeAutoLaunch()
+        public void OpenSnackbar(string title, string message, SymbolRegular icon)
         {
-            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string filePath = Path.Combine(documentsPath, "auto_launch.ini");
-
-            if (File.Exists(filePath))
-            {
-                string url = File.ReadAllText(filePath);
-
-                // 使用正则表达式提取token和id
-                Match match = Regex.Match(url, @"locyanfrp://([^/]+)/([^/]+)");
-
-                if (match.Success && match.Groups.Count == 3)
+            Dispatcher.Invoke(() =>
                 {
-                    string token = match.Groups[1].Value;
-                    string id = match.Groups[2].Value;
-                    string appDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-                    RunCmdCommand($"\"{appDirectory}/frpc.exe\" -u {token} -p {id}");
-                    File.Delete(filePath);
-                    Close();
-                }
-                else
-                {
-                    MessageBox.Show($"自动启动出错 \n url: {url} \n filepath: {filePath}", "警告");
-                }
-            }
-        }
-
-        private void RunCmdCommand(string command)
-        {
-            // 创建一个 ProcessStartInfo 对象
-            ProcessStartInfo psi = new ProcessStartInfo
-            {
-                FileName = "cmd.exe", // 指定要运行的命令行程序
-                Arguments = "/k " + command, // 使用 /k 参数保持 cmd 窗口打开，显示输出内容
-                Verb = "runas",
-                UseShellExecute = true, // 设置为 true 以便在新窗口中显示命令行窗口
-                CreateNoWindow = false // 设置为 false 以显示命令行窗口
-            };
-
-            // 创建一个 Process 对象并启动进程
-            Process.Start(psi);
+                    
+                    Snackbar.Show(title, message, icon);
+                });
         }
 
         private async void InitializeAutoLogin()
         {
-            bool islogin = await CheckLogined();
+            islogin = await CheckLogined();
             if (islogin)
             {
                 Properties.Settings.Default.LoginToken = token_auto;
                 Properties.Settings.Default.username = username_auto;
                 Properties.Settings.Default.FrpToken = UserInfo.Token;
-                new DashBoard().Show();
+                DashBoard = new DashBoard();
+                DashBoard.Show();
                 Close();
             }
         }
@@ -158,7 +128,7 @@ namespace LoCyanFrpDesktop
             // 使用密码，例如验证或其他操作
             if (string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("解析密码的过程中发生错误, 请联系开发者!", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                Logger.MsgBox("解析密码的过程中发生错误, 请联系开发者!", "错误",0,48,0);
                 return;
             }
 
@@ -184,30 +154,31 @@ namespace LoCyanFrpDesktop
 
                         if (responseObject.Status != 0)
                         {
-                            MessageBox.Show("账号或密码错误！", "警告", MessageBoxButton.OK, MessageBoxImage.Error);
+                            Logger.MsgBox("账号或密码错误！", "警告", 0,48,0);
                         }
                         else
                         {
-                            MessageBox.Show($"登录成功, 获取到登录Token: {responseObject.Token}", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                            Logger.MsgBox($"登录成功\n获取到登录Token: {responseObject.Token}", "提示", 0, 47,0);
                             Properties.Settings.Default.LoginToken = responseObject.Token;
                             Properties.Settings.Default.username = responseObject.UserData.Username;
                             Properties.Settings.Default.FrpToken = responseObject.UserData.FrpToken;
                             string path = ".//session.token";
                             string text = $"{responseObject.UserData.Username}|{responseObject.Token}";
                             File.WriteAllText(path, text);
-                            new DashBoard().Show();
+                            DashBoard = new DashBoard();
+                            DashBoard.Show();
                             Close();
                         }
                     }
                     catch (HttpRequestException ex)
                     {
-                        MessageBox.Show($"请求API的过程中出错 \n 报错信息: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Logger.MsgBox($"请求API的过程中出错 \n 报错信息: {ex.Message}", "错误", 0, 48,0);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("用户名 / 密码不能为空!", "警告", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Logger.MsgBox("用户名 / 密码不能为空!", "警告", 0, 48,0);
             }
         }
 
@@ -283,7 +254,7 @@ namespace LoCyanFrpDesktop
         public void UiWindow_Closing(object sender, CancelEventArgs e)
         {
                 e.Cancel = true;
-                ShowInTaskbar = false;
+                ShowInTaskbar = true;
                 Hide();
         }
         public void UiWindow_StateChanged(object sender, EventArgs e)
@@ -300,12 +271,25 @@ namespace LoCyanFrpDesktop
         public void Hide_Click(object sender, RoutedEventArgs e)
         {
             ShowInTaskbar = false;
+            DashBoard.Hide();
             Hide();
         }
 
         public void Exit_Click(object sender, RoutedEventArgs e)
         {
-                Close();
+                Environment.Exit(0);
+        }
+
+        private void NotifyIcon_LeftClick(Wpf.Ui.Controls.NotifyIcon sender, RoutedEventArgs e)
+        {
+            if (islogin)
+            {
+                DashBoard.Show();
+            }
+            else
+            {
+                Show();
+            }
         }
     }
 

@@ -11,5 +11,8 @@
     <Setting Name="FrpToken" Type="System.String" Scope="User">
       <Value Profile="(Default)">null</Value>
     </Setting>
+    <Setting Name="FrpcPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>
