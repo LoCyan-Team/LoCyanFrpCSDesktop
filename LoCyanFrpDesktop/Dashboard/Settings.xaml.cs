@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using LoCyanFrpDesktop.Utils;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace LoCyanFrpDesktop.Dashboard
         public Settings()
         {
             InitializeComponent();
+            Access.Settings = this;
             _Version.Text = $"版本: Ver {Global.Version}-{Global.Branch}{Global.Revision}";
             _BuildInfo.Text = Global.BuildInfo.ToString();
             _Developer.Text = $"开发者: {Global.Developer}";

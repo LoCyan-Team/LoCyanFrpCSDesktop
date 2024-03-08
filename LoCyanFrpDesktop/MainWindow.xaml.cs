@@ -75,6 +75,7 @@ namespace LoCyanFrpDesktop
                 DashBoard = new DashBoard();
                 DashBoard.Show();
                 Close();
+                Access.DashBoard.CheckIfFrpcInstalled();
             }
         }
 
@@ -244,7 +245,7 @@ namespace LoCyanFrpDesktop
             //DarkThemeEnabled = false;
             Theme.Apply(DarkThemeEnabled ? ThemeType.Dark : ThemeType.Light, WindowBackdropType = BackgroundType.Mica);
             
-            MainForm.Background = new SolidColorBrush(DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke);
+            //MainForm.Background = new SolidColorBrush(DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke);
             Color newColor = DarkThemeEnabled ? Colors.White : Colors.LightGray;
             Resources["ShadowColor"] = newColor;
 

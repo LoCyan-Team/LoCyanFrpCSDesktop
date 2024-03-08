@@ -24,6 +24,7 @@ using System.IO;
 using MessageBox = Wpf.Ui.Controls.MessageBox;
 using LoCyanFrpDesktop.Utils;
 using Wpf.Ui.Common;
+using Microsoft.VisualBasic;
 
 namespace LoCyanFrpDesktop
 {
@@ -32,8 +33,11 @@ namespace LoCyanFrpDesktop
     /// </summary>
     public partial class DashBoard : UiWindow
     {
-        bool isFrpcInstalled;
+        public static bool isFrpcInstalled;
         public static Snackbar Snackbar = new Snackbar();
+        public static string FrpcPathConfig = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FrpcPath.conf");
+        public double originalCenterX;
+        public double originalCenterY;
         /// <summary>
         /// 
         /// </summary>
@@ -42,22 +46,53 @@ namespace LoCyanFrpDesktop
             InitializeComponent();
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = new BitmapImage(iconUri);
-            isFrpcInstalled = CheckIfFrpcInstalled();
             Access.DashBoard = this;
         }
-        private bool CheckIfFrpcInstalled()
+        public bool CheckIfFrpcInstalled()
         {
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.FrpcPath))
+            if (!File.Exists(FrpcPathConfig))
             {
-                if (!File.Exists(Properties.Settings.Default.FrpcPath))
+                File.Create(Path.Combine(FrpcPathConfig));
+                bool isConfirmed = Logger.MsgBox("您需要我们自动为您安装frpc吗?", "未检测到您安装的frpc", 1, 47, 1);
+                if(isConfirmed)
                 {
-                    File.Create(Path.Combine(Directory.GetDirectoryRoot(Properties.Settings.Default.FrpcPath), "FrpcPath.conf"));
-                    return false;
+                    DownloadFrpc();
                 }
+                return false;
+            }else
+            {
+                StreamReader PathConfig = new StreamReader(FrpcPathConfig);
+                string line = PathConfig.ReadLine();
+                PathConfig.Close();
+                if (line != null)
+                {
+                    Properties.Settings.Default.FrpcPath = line;
+                    Access.Settings.FrpcPath.Text = line;
+                    return true;
+                }
+                bool isConfirmed = Logger.MsgBox("您需要我们自动为您安装frpc吗?", "未检测到您安装的frpc", 1, 47, 1);
+                if (isConfirmed)
+                {
+                    DownloadFrpc();
+                }
+                return false;
             }
-            else { return false; }
             
             return false;
+        }
+        public void DownloadFrpc()
+        {
+            //double screenWidth = SystemParameters.WorkArea.Width;
+            //double screenHeight = SystemParameters.WorkArea.Height;
+
+            // 获取原窗口的中心点
+            //originalCenterX = Owner.Left + Owner.Width / 2;
+            //originalCenterY = Owner.Top + Owner.Height / 2;
+            //Left = originalCenterX - Width / 2;
+            //Top = originalCenterY - Height / 2;
+            Download downloader = new Download();
+            downloader.Owner = this;
+            downloader.Show();
         }
         public void OpenSnackbar(string title, string message, SymbolRegular icon)
         {

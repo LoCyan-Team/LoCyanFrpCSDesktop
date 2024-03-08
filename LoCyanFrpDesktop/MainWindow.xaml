@@ -67,12 +67,14 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="1" >
                 <Grid Height="400" VerticalAlignment="center">
-                    <Border Name="MainForm" Background="Gray" CornerRadius="10">
-                        <Border.Effect>
-                            <DropShadowEffect Color="{DynamicResource ShadowColor}" ShadowDepth="0" BlurRadius="20" Opacity="0.5"/>
-                        </Border.Effect>
+                    <Border
+                        Grid.Column="1"
+                        Margin="0"
+                        Padding="10,5"
+                        Background="{DynamicResource ControlFillColorDefaultBrush}"
+                        CornerRadius="8">
                         <Grid Opacity="1">
-                        <Grid>
+                            <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="80"/>

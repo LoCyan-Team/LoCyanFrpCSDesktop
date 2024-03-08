@@ -12,6 +12,6 @@ namespace LoCyanFrpDesktop.Utils
         public static Status? Status { get; set; }
         public static MainWindow? MainWindow { get; set; }
         public static DashBoard? DashBoard { get; set; }
-
+        public static Settings? Settings { get; set; }
     }
 }
