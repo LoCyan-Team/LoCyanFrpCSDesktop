@@ -43,7 +43,7 @@ namespace LoCyanFrpDesktop
         string token_auto;
         private static bool islogin = false;
         public static DashBoard DashBoard;
-        public static Snackbar Snackbar = new Snackbar();
+        //public static Snackbar Snackbar = new Snackbar();
         public MainWindow()
         {
             

@@ -16,6 +16,8 @@
                      HorizontalAlignment="Stretch" 
                      IsReadOnly="True"
                      IsUndoEnabled="False"
-                     UndoLimit="0"/>
+                     UndoLimit="0"
+                     FontSize="12"
+                     />
     </Grid>
 </ui:UiPage>

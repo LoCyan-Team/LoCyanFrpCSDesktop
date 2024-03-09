@@ -34,7 +34,7 @@ namespace LoCyanFrpDesktop
     public partial class DashBoard : UiWindow
     {
         public static bool isFrpcInstalled;
-        public static Snackbar Snackbar = new Snackbar();
+        //public static Snackbar Snackbar = new Snackbar();
         public static string FrpcPathConfig = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FrpcPath.conf");
         public double originalCenterX;
         public double originalCenterY;
@@ -67,7 +67,6 @@ namespace LoCyanFrpDesktop
                 if (line != null)
                 {
                     Properties.Settings.Default.FrpcPath = line;
-                    Access.Settings.FrpcPath.Text = line;
                     return true;
                 }
                 bool isConfirmed = Logger.MsgBox("您需要我们自动为您安装frpc吗?", "未检测到您安装的frpc", 1, 47, 1);
@@ -97,7 +96,7 @@ namespace LoCyanFrpDesktop
         public void OpenSnackbar(string title, string message, SymbolRegular icon)
         {
             Dispatcher.Invoke(() =>
-            {
+            {   
                 Snackbar.Show(title, message, icon);
             });
         }

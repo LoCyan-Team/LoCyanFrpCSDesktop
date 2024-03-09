@@ -41,7 +41,7 @@ namespace LoCyanFrpDesktop.Utils
             }
             Access.Status.Dispatcher.Invoke(() => Access.Status.Append(LogPreProcess.Color(type, line)));
             LogPreProcess.Process.Cache.Add(new(type, line));
-            if (LogPreProcess.Process.Cache.Count > 300)
+            if (LogPreProcess.Process.Cache.Count > 200)
             {
                 LogPreProcess.Process.Cache.RemoveRange(0, LogPreProcess.Process.Cache.Count - 300);
             }
@@ -121,5 +121,6 @@ namespace LoCyanFrpDesktop.Utils
             messageBox.ShowDialog();
             return confirmed;
         }
+
     }
 }

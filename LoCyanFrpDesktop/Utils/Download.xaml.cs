@@ -21,6 +21,10 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms.Design;
+using System.Linq.Expressions;
 
 namespace LoCyanFrpDesktop.Utils
 {
@@ -35,12 +39,15 @@ namespace LoCyanFrpDesktop.Utils
         public static string APIInfo;
         public static string TheFuckingLink;
         public static string DownloadPath = AppDomain.CurrentDomain.BaseDirectory;
+        public string DownloadUnit = "KB/s";
+        public static string FolderName;
         public Download()
         {
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
             InitDownloader();
+            this.Owner = this;
             StartDownload();
             
         }
@@ -94,18 +101,38 @@ namespace LoCyanFrpDesktop.Utils
             // Download completed event that can include occurred errors or 
             // cancelled or download completed successfully.
 
-
+            DownloadService.DownloadStarted += OnDownloadStarted;
             DownloadService.DownloadProgressChanged += OnDownloadProgressChanged;
             DownloadService.DownloadFileCompleted += OnDownloadFileCompleted;
+        }
+
+        private void OnDownloadStarted(object? sender, DownloadStartedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DownloadProgress.IsIndeterminate = false;
+            });
+            
         }
 
         private void OnDownloadProgressChanged(object? sender, Downloader.DownloadProgressChangedEventArgs e)
         {   
             Dispatcher.Invoke(() => 
             {
+                double speed = Math.Round(e.BytesPerSecondSpeed / 1024, 2);
+                if (e.BytesPerSecondSpeed > 1024 * 1024)
+                {
+                    speed = Math.Round(e.BytesPerSecondSpeed / 1024 / 1024, 2);
+                    DownloadUnit = "MB/s";
+                }
+                else
+                {
+                    speed = Math.Round(e.BytesPerSecondSpeed / 1024, 2);
+                    DownloadUnit = "KB/s";
+                }
+                DownloadProgress.Value = (int) e.ProgressPercentage;
                 
-                DownloadProgress.Value = (int) e.ProgressPercentage * 100;
-                DownloadSpeed.Text = $"下载速度: {e.BytesPerSecondSpeed}";
+                DownloadSpeed.Text = $"下载速度: {speed} {DownloadUnit}";
             });
             
         }
@@ -117,33 +144,55 @@ namespace LoCyanFrpDesktop.Utils
                 if (e.Cancelled)
                 {
                     Console.WriteLine("CANCELED");
+                    return;
                 }
                 else if (e.Error != null)
                 {
                     Console.Error.WriteLine(e.Error);
                     CrashInterception.ShowException(e.Error);
-
+                    this.Owner = null;
+                    Close();
+                    return;
                 }
                 else
                 {
                     Console.WriteLine("DONE");
+                    DownloadProgress.Visibility = Visibility.Collapsed;
+                    DownloadProgressRing.Visibility = Visibility.Visible;
+                    DownloadSpeed.Visibility = Visibility.Collapsed;
+                    Notice.Text = "正在解压......";
+                    Thread.Sleep(1000);
                     UnpackAndAutoSetup();
                 }
-                DownloadProgress.Visibility = Visibility.Collapsed;
-                DownloadProgressRing.Visibility = Visibility.Visible;
-                DownloadSpeed.Visibility = Visibility.Collapsed;
-                Notice.Text = "正在解压......";
+                
             });
             
         }
         public void UnpackAndAutoSetup()
         {
             try
-            {
+            {   
+                if (Directory.Exists(Path.Combine(DownloadPath, "Temp")))
+                {
+                    Directory.Delete(Path.Combine(DownloadPath, "Temp"),true);
+                    
+                    Directory.CreateDirectory(Path.Combine(DownloadPath, "Temp"));
+                }
+                
                 ZipFile.ExtractToDirectory(Path.Combine(DownloadPath, "frpc.temp"), Path.Combine(DownloadPath, "Temp"));
-                File.Move(Path.Combine(DownloadPath, "Temp\\frpc.exe"),Path.Combine(DownloadPath, "frpc.exe"));
+                if(File.Exists(Path.Combine(DownloadPath, "frpc.exe")))
+                {
+                    File.Delete(Path.Combine(DownloadPath, "frpc.exe"));
+                    File.Move(Path.Combine(DownloadPath, "Temp", FolderName, "frpc.exe"), Path.Combine(DownloadPath, "frpc.exe"));
+                }
                 string path = Path.Combine(DownloadPath, "frpc.exe");
-                Access.Settings.FrpcPath.Text = path;
+                try
+                {
+                    Access.Settings.FrpcPath.Text = path;
+                }catch (Exception ex)
+                {
+                    CrashInterception.ShowException(ex);
+                }
                 Properties.Settings.Default.FrpcPath = path;
                 var ConfigPath = Path.Combine(DownloadPath, "FrpcPath.conf");
 
@@ -177,7 +226,7 @@ namespace LoCyanFrpDesktop.Utils
                 }
 
 
-
+                
                 Close();
             }
             catch (Exception ex) {
@@ -212,36 +261,48 @@ namespace LoCyanFrpDesktop.Utils
         }
         private static async Task RequestAPIandParse(string url)
         {
-            var HttpClient = new HttpClient();
-            HttpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188");
-            var Response = await HttpClient.GetAsync(url);
-            if (Response.IsSuccessStatusCode)
+            try
             {
-                var APIResponse = Response.Content.ReadAsStringAsync();
-                APIInfo = APIResponse.Result;
-                JObject ParsedAPIInfo = JObject.Parse(APIInfo);
-                string DownloadLink = ParsedAPIInfo["assets"][0]["browser_download_url"].ToString();
-                string DownloadVersion = ParsedAPIInfo["tag_name"].ToString();
-                var Version = DownloadVersion.Substring(1);
-                string architecture = RuntimeInformation.OSArchitecture.ToString();
-                if(architecture == "X86")
+                var HttpClient = new HttpClient();
+                HttpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188");
+                var Response = await HttpClient.GetAsync(url);
+                if (Response.IsSuccessStatusCode)
                 {
-                    TheFuckingLink = $"https://proxy-gh.1l1.icu/https://github.com/LoCyan-Team/LoCyanFrpPureApp/releases/download/{DownloadVersion}/frp_LoCyanFrp-{Version}_windows_386.zip";
+                    var APIResponse = Response.Content.ReadAsStringAsync();
+                    APIInfo = APIResponse.Result;
+                    JObject ParsedAPIInfo = JObject.Parse(APIInfo);
+                    string DownloadLink = ParsedAPIInfo["assets"][0]["browser_download_url"].ToString();
+                    string DownloadVersion = ParsedAPIInfo["tag_name"].ToString();
+                    string pattern = @"v(\d+\.\d+\.\d+)-\d+";
+                    Match match = Regex.Match(DownloadVersion, pattern);
+                    var Version = match.Groups[1].Value;
+                    string architecture = RuntimeInformation.OSArchitecture.ToString();
+                    if (architecture == "X86")
+                    {
+                        TheFuckingLink = $"https://proxy-gh.1l1.icu/https://github.com/LoCyan-Team/LoCyanFrpPureApp/releases/download/{DownloadVersion}/frp_LoCyanFrp-{Version}_windows_386.zip";
+                    }
+                    else
+                    {
+                        TheFuckingLink = $"https://proxy-gh.1l1.icu/https://github.com/LoCyan-Team/LoCyanFrpPureApp/releases/download/{DownloadVersion}/frp_LoCyanFrp-{Version}_windows_amd64.zip";
+                    }
+                    FolderName = $"frp_LoCyanFrp-{Version}_windows_amd64";
+                    Console.WriteLine(TheFuckingLink);
+                    await DownloadFile(TheFuckingLink, DownloadPath);
+
                 }
                 else
                 {
-                    TheFuckingLink = $"https://proxy-gh.1l1.icu/https://github.com/LoCyan-Team/LoCyanFrpPureApp/releases/download/{DownloadVersion}/frp_LoCyanFrp-{Version}_windows_amd64.zip";
+
+                    Logger.MsgBox("唔......好像您的网络出了点问题唉，要去检查一下哦", "出现了点小问题", 2, 47, 1);
+                    return;
                 }
-                Console.WriteLine(TheFuckingLink);
-                await DownloadFile(TheFuckingLink, DownloadPath);
-
             }
-            else
-            {   
-
-                Logger.MsgBox("唔......好像您的网络出了点问题唉，要去检查一下哦", "出现了点小问题", 2, 47, 1);
+            catch(Exception ex)
+            {
+                CrashInterception.ShowException(ex);
                 return;
             }
+            
         }
         public void OpenSnackbar(string title, string message, SymbolRegular icon)
         {
@@ -262,6 +323,8 @@ namespace LoCyanFrpDesktop.Utils
                 {
                     DownloadService.CancelAsync();
                     //Access.DashBoard.Show();
+                    this.Owner = null;
+                    Close();
                     Access.DashBoard.Navigation.Navigate(2);
                     
                 }

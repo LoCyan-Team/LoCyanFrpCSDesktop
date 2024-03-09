@@ -38,6 +38,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBox Name="FrpcPath" 
                                 IsReadOnly="True"
+                                     Text=" "
                                 ToolTip="服务端的启动路径" />
                             <ui:Button
                                 x:Name="Select"

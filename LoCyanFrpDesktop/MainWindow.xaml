@@ -66,9 +66,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="1" >
+                
                 <Grid Height="400" VerticalAlignment="center">
                     <Border
-                        Grid.Column="1"
                         Margin="0"
                         Padding="10,5"
                         Background="{DynamicResource ControlFillColorDefaultBrush}"
@@ -105,20 +105,24 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Name="Register" FontSize="12" Text="" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Hyperlink NavigateUri="https://preview.locyanfrp.cn/register" RequestNavigate="Register_Navigate">
-                        没有账号? 前往注册
-                    </Hyperlink>
+                                        <Hyperlink NavigateUri="https://preview.locyanfrp.cn/register" RequestNavigate="Register_Navigate">
+                                            没有账号? 前往注册
+                                        </Hyperlink>
                                     </TextBlock>
                                     <TextBlock Grid.Column="1" Name="ForgetPassword" FontSize="12" Text="" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Hyperlink NavigateUri="https://preview.locyanfrp.cn/reset_password" RequestNavigate="ForgetPassword_Navigate">
-                        忘记密码?
-                    </Hyperlink>
+                                        <Hyperlink NavigateUri="https://preview.locyanfrp.cn/reset_password" RequestNavigate="ForgetPassword_Navigate">
+                                            忘记密码?
+                                        </Hyperlink>
                                     </TextBlock>
                                 </Grid>
                             </Grid>
+                            <ui:Snackbar
+                                x:Name="Snackbar"
+                                Grid.Column="1"
+                                Panel.ZIndex="999"
+                                Timeout="5000" />
 
-
-                    </Grid>
+                        </Grid>
                     </Border>
                 </Grid>
 

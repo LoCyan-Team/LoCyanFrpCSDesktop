@@ -17,7 +17,6 @@
             <RowDefinition Height="60"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
         <Grid Grid.Row="0" HorizontalAlignment="Left">
             <TextBlock VerticalAlignment="Center" Text="隧道列表" FontSize="22" Margin="10,0,10,0" />
         </Grid>
@@ -27,6 +26,7 @@
                 <RowDefinition Height="100"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="2">
+                
                 <Border
                 Grid.Column="1"
                 Margin="0"
@@ -60,10 +60,13 @@
                             <TextBlock Name="title_username" Text="欢迎回来，"/>
                         </DockPanel>
                     </StackPanel>
+                    
                     <ui:Card.Footer>
                         <TextBlock Text="PS:右键隧道可以打开菜单哦喵~" />
                     </ui:Card.Footer>   
                 </ui:Card>
+
+                
             </Grid>
         </Grid>
         

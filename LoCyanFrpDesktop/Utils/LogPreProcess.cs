@@ -19,7 +19,7 @@ namespace LoCyanFrpDesktop.Utils
         }
         public static string Filter(string input)
         {
-            string result = RegExp.Regex.Replace(input, @"\x1b\[.*?m", string.Empty);
+            string result = RegExp.Regex.Replace(input, @"\x1b.*?m", string.Empty);
             result = RegExp.Regex.Replace(result, @"\x1b", string.Empty);
             //Console.WriteLine(result);
             StringBuilder stringBuilder = new();
@@ -34,36 +34,37 @@ namespace LoCyanFrpDesktop.Utils
             return stringBuilder.ToString();
         }
         public static Paragraph Color(LogType type, string text)
-        {
+        {   
+            Console.WriteLine(text);
             Paragraph paragraph = new()
             {
                 Margin = new(0, 0, 0, 0),
                 FontFamily = new("Consolas,微软雅黑")
             };
-            paragraph.Inlines.Add(text);
             return paragraph.Highlight(text);
 
         }
-        public static Paragraph Color((LogType, string) line) => Color(line.Item1, line.Item2);
         //public static Paragraph Color((LogType, string) line) => Color(line.Item1, line.Item2);
+        public static Paragraph Color((LogType, string) line) => Color(line.Item1, line.Item2);
 
         private static Paragraph Highlight(this Paragraph paragraph, string line)
         {
-            foreach (string words in RegExp.Regex.Split(Filter(line), @"(?<=\b)(info|warn(ing)?|error|debug|\d{5,}|true|false)(?=\b)", RegExp.RegexOptions.IgnoreCase))
+            foreach (string words in RegExp.Regex.Split(Filter(line), @"(?<=\[)(i|w|e|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+)(?=\])", RegExp.RegexOptions.IgnoreCase))
             {
                 Run run = new(words);
                 run.Foreground = words.ToLowerInvariant() switch
                 {
-                    "info" => Brushes.MediumTurquoise,
-                    "warn" => Brushes.Gold,
-                    "warning" => Brushes.Gold,
+                    "i" => Brushes.MediumTurquoise,
+                    "w" => Brushes.Gold,
+                    "e" => Brushes.Crimson,
                     "error" => Brushes.Crimson,
                     "debug" => Brushes.DarkOrchid,
                     "true" => Brushes.YellowGreen,
                     "false" => Brushes.Tomato,
-                    _ => RegExp.Regex.IsMatch(words, @"^\d+$") ? Brushes.Teal : MainWindow.DarkThemeEnabled ? Brushes.White : Brushes.Black,
+                    _ => RegExp.Regex.IsMatch(words, @"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+)") ? Brushes.Teal : MainWindow.DarkThemeEnabled ? Brushes.White : Brushes.Black,
                     //_ => Global.Settings.Serein.UseDarkTheme ? Brushes.White : Brushes.Black ,
                 };
+                Console.WriteLine(run);
                 paragraph.Inlines.Add(run);
             }
             return paragraph;

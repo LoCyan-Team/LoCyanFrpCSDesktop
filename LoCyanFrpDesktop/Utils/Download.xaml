@@ -46,7 +46,7 @@
                 <TextBlock x:Name="Notice" FontSize="16" Margin="1,10" Text="正在为您下载"/>
             </Grid>
             <Grid Grid.Row="1">
-                <ProgressBar Name="DownloadProgress" Height="20" Maximum="100"/>
+                <ProgressBar Name="DownloadProgress" Height="20" Maximum="100" IsIndeterminate="True"/>
                 <ui:ProgressRing Name="DownloadProgressRing" HorizontalAlignment="Left" Visibility="Collapsed" IsIndeterminate="True"/>
             </Grid>
             <Grid Grid.Row="2">

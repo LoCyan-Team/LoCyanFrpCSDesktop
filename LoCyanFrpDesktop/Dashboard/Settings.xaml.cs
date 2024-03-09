@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Wpf.Ui.Controls;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace LoCyanFrpDesktop.Dashboard
 {
@@ -31,7 +32,7 @@ namespace LoCyanFrpDesktop.Dashboard
             _BuildInfo.Text = Global.BuildInfo.ToString();
             _Developer.Text = $"开发者: {Global.Developer}";
             _Copyright.Text = Global.Copyright;
-            
+            FrpcPath.Text = Properties.Settings.Default.FrpcPath;
         }
         public void Select_Click(object sender, RoutedEventArgs e)
         {

@@ -31,6 +31,7 @@ namespace LoCyanFrpDesktop.Dashboard
         {
             InitializeComponent();
             Access.Status = this;
+            
             lock (LogPreProcess.Process.Cache)
             {
                 LogPreProcess.Process.Cache.ForEach(
@@ -41,6 +42,7 @@ namespace LoCyanFrpDesktop.Dashboard
         }
         public void Append(Paragraph paragraph)
         {
+            
             Dispatcher.Invoke(() =>
             {
                 LogOutput.Document = LogOutput.Document ?? new();

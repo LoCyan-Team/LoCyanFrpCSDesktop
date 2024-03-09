@@ -22,6 +22,7 @@ using LoCyanFrpDesktop.Dashboard;
 using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using System.IO;
+using static LoCyanFrpDesktop.Utils.PNAP;
 
 namespace LoCyanFrpDesktop.Dashboard
 {
@@ -33,17 +34,20 @@ namespace LoCyanFrpDesktop.Dashboard
         public ObservableCollection<string> Proxies { get; set; }
 
         public List<Proxy> Proxieslist { get; set; }
-
+        //public PNAPListComp ListComponents = new PNAPListComp();
+        public static List<PNAPListComp> PNAPList = new List<PNAPListComp>();
         public string SelectedProxy { get; set; }
         public static string lineFiltered;
         public ProxyList()
         {
             InitializeComponent();
             InitializeProxiesAsync();
-            InitializeAutoLaunch();
+            //Wait For Rewrite.
+            //InitializeAutoLaunch();
             DataContext = this;
             title_username.Text = $"欢迎回来，{Properties.Settings.Default.username}";
             Resources["BorderColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray;
+            
         }
 
         private async void InitializeProxiesAsync()
@@ -163,7 +167,8 @@ namespace LoCyanFrpDesktop.Dashboard
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
-        {
+        {   
+            
             string proxy_name = SelectedProxy;
             int proxy_id = 0;
             foreach (var item in Proxieslist)
@@ -180,8 +185,22 @@ namespace LoCyanFrpDesktop.Dashboard
                 System.Windows.Forms.MessageBox.Show("无法将隧道名解析为隧道ID，请检查自己的隧道配置", "警告");
                 return;
             }
+            Access.DashBoard.Navigation.Navigate(1);
             // 运行frp
-            RunCmdCommand($" -u {Properties.Settings.Default.FrpToken} -p {proxy_id}");
+            try
+            {
+                if (PNAP.PNAPList.Any(prcs => prcs.ProcessName == proxy_id))
+                {
+                    Logger.MsgBox("这个隧道已经启动了哦", "LocyanFrp", 0, 48, 1);
+                    return;
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            RunCmdCommand($" -u {Properties.Settings.Default.FrpToken} -p ",proxy_id, proxies_list.SelectedIndex);
 
         }
 
@@ -198,23 +217,43 @@ namespace LoCyanFrpDesktop.Dashboard
             }
         }
 
-        private void RunCmdCommand(string command)
+        private void RunCmdCommand(string command,int ProxyID,int SelectionIndex)
         {
             // 创建一个 ProcessStartInfo 对象
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = Properties.Settings.Default.FrpcPath, // 指定要运行的命令行程序
-                Arguments = command, // 使用 /k 参数保持 cmd 窗口打开，显示输出内容
+                Arguments = command + ProxyID, // 使用 /k 参数保持 cmd 窗口打开，显示输出内容
                 Verb = "runas",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false, // 设置为 true 以便在新窗口中显示命令行窗口
-                CreateNoWindow = true // 设置为 false 以显示命令行窗口
+                CreateNoWindow = true, // 设置为 false 以显示命令行窗口
+                StandardOutputEncoding = Encoding.UTF8
             };
             // 启动进程
-            Process _serverProcess = Process.Start(psi);
-            _serverProcess.BeginOutputReadLine();
-            _serverProcess.OutputDataReceived += SortOutputHandler;
+            Process _FrpcProcess = Process.Start(psi);
+            _FrpcProcess.BeginOutputReadLine();
+            try
+            {
+                if (!PNAPList.Any(Process => Process.ProcessName == ProxyID))
+                {   
+
+                    PNAPList.Add(new PNAPListComp() { ProcessName = ProxyID, IsRunning = true, Pid = _FrpcProcess.Id, ListIndex = SelectionIndex });
+                }
+                else
+                {
+                    int Index = PNAPList.FindIndex(Process => Process.ProcessName == ProxyID);
+                    PNAPList[Index].IsRunning = true;
+                    PNAPList[Index].ListIndex = SelectionIndex;
+                    PNAPList[Index].Pid = _FrpcProcess.Id;
+                }
+            }catch (Exception ex)
+            {
+                PNAPList.Add(new PNAPListComp() { ProcessName = ProxyID, IsRunning = true, Pid = _FrpcProcess.Id, ListIndex = SelectionIndex });
+            }
+            
+            _FrpcProcess.OutputDataReceived += SortOutputHandler;
             // 读取标准输出和标准错误输出
             //string output = process.StandardOutput.ReadToEnd(); 
             //string error = process.StandardError.ReadToEnd();
@@ -234,7 +273,9 @@ namespace LoCyanFrpDesktop.Dashboard
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                lineFiltered = LogPreProcess.Filter(e.Data);
+                //lineFiltered = LogPreProcess.Filter(e.Data);
+                //Console.WriteLine(e.Data);
+                Logger.Output(LogType.Info, e.Data);
             }
         }
 
@@ -250,26 +291,62 @@ namespace LoCyanFrpDesktop.Dashboard
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
-
+            throw new NotImplementedException();
         }
         private void StartProxy_Click(object sender, RoutedEventArgs e)
         {
-            Button_Click(sender, e);
+            try
+            {
+                int Index = PNAPList.FindIndex(Process => Process.ListIndex == proxies_list.SelectedIndex);
+                if (!(bool)PNAPList[Index].IsRunning)
+                {
+                    Button_Click(sender, e);
+                }
+                else
+                {
+                    Logger.MsgBox("这个隧道已经启动了哦", "LocyanFrp", 0, 48, 1);
+                }
+            }catch(Exception ex)
+            {   
+                Button_Click(sender, e);
+            }
+            
+            
         }
         private void StopProxy_Click(Object sender, RoutedEventArgs e)
         {
+            //我在写什么，我不知道我在写些什么
+            try
+            {
+                int Index = PNAPList.FindIndex(Process => Process.ListIndex == proxies_list.SelectedIndex);
+                if (!(bool)PNAPList[Index].IsRunning)
+                {   
 
+                    Logger.MsgBox("这个隧道并没有启动哦", "LocyanFrp", 0, 48, 1);
+                }
+                else
+                {
+                    Process process = Process.GetProcessById(PNAPList[Index].Pid);
+                    process.Close();
+                    PNAPList[Index].IsRunning = false;
+                }
+            }catch( Exception ex)
+            {   
+                CrashInterception.ShowException(ex);
+                Logger.MsgBox("这个隧道并没有启动哦", "LocyanFrp", 0, 48, 1);
+            }
+            
         }
 
         private void DeleteProxy_Click(object sender, RoutedEventArgs e)
         {
-
+            throw new NotImplementedException();
         }
         private void CreateNewProxy_Click(object sender, RoutedEventArgs e)
         {
-
+            throw new NotImplementedException();
         }
-        private void InitializeAutoLaunch()
+        /*private void InitializeAutoLaunch()
         {
             string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             string filePath = Path.Combine(documentsPath, "auto_launch.ini");
@@ -294,6 +371,6 @@ namespace LoCyanFrpDesktop.Dashboard
                 }
             }
 
-        }
+        }*/
     }
 }
