@@ -95,14 +95,14 @@ namespace LoCyanFrpDesktop.Dashboard
                 }
                 catch (Exception ex)
                 {
-                    System.Windows.Forms.MessageBox.Show(ex.Message);
+                    CrashInterception.ShowException(ex);
                     return null;
                 }
             }
 
             if (responseObject.Status != 0)
             {
-                System.Windows.Forms.MessageBox.Show("获取隧道失败，请重启软件重新登陆账号", "提示");
+                Logger.MsgBox("获取隧道失败，请重启软件重新登陆账号", "LocyanFrp",0,48,1);
                 return null;
             }
 
@@ -146,7 +146,7 @@ namespace LoCyanFrpDesktop.Dashboard
 
             [JsonProperty("use_encryption")]
             public bool UseEncryption { get; set; }
-
+            [JsonProperty("domain")]
             public string Domain { get; set; }
             public int Node { get; set; }
 
