@@ -1,0 +1,59 @@
+﻿name: Build
+
+on:
+  push:
+    paths:
+      - "**.cs"
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  BuildForWindows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Write Build info
+        shell: cmd
+        run: |
+          cmd /c echo GITHUB ACTION #${{github.run_number}} >${{ github.workspace }}\LoCyanFrpDesktop\buildinfo.info
+          cmd /c echo %date% %time% >>${{ github.workspace }}\LoCyanFrpDesktop\buildinfo.info
+          cmd /c echo ${{github.ref}} ${{github.sha}}>>${{ github.workspace }}\LoCyanFrpDesktop\buildinfo.info
+
+      - name: DotNet restore
+        run: dotnet restore
+
+      - name: Build the project(Release)
+        run: dotnet build -p:Configuration=Release "LoCyanFrpDesktop/LoCyanFrpDesktop.csproj"
+
+      - name: Build the project(Debug)
+        run: dotnet build "LoCyanFrpDesktop/LoCyanFrpDesktop.csproj"
+
+      - name: Upload LocyanFrp(Release,dotnet6-windows)
+        uses: actions/upload-artifact@v3
+        with:
+          name: LoCyanFrpDesktop_dotnet6
+          path: ${{ github.workspace }}\LoCyanFrpDesktop\bin\Release\net6.0-windows
+          if-no-files-found: ignore
+
+      - name: Build the project(Publish)
+        run: |
+          dotnet clean
+          dotnet publish "LoCyanFrpDesktop/LoCyanFrpDesktop.csproj" -f net6.0-windows --no-self-contained -p:PublishSingleFile=true -p:RuntimeIdentifier=win-x64 -p:IncludeContentInSingleFile=true
+
+      - name: Upload Serein(Publish)
+        uses: actions/upload-artifact@v3
+        with:
+          name: LoCyanFrpDesktop_dotnet6_publish
+          path: ${{ github.workspace }}\LoCyanFrpDesktop\bin\Debug\net6.0-windows\win-x64\publish
+          if-no-files-found: ignore
+
+  
