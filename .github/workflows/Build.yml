@@ -12,12 +12,12 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
       - name: Install .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.0.x
 
@@ -38,7 +38,7 @@ jobs:
         run: dotnet build "LoCyanFrpDesktop/LoCyanFrpDesktop.csproj"
 
       - name: Upload LocyanFrp(Release,dotnet6-windows)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: LoCyanFrpDesktop_dotnet6
           path: ${{ github.workspace }}\LoCyanFrpDesktop\bin\Release\net6.0-windows
@@ -50,7 +50,7 @@ jobs:
           dotnet publish "LoCyanFrpDesktop/LoCyanFrpDesktop.csproj" -f net6.0-windows --no-self-contained -p:PublishSingleFile=true -p:RuntimeIdentifier=win-x64 -p:IncludeContentInSingleFile=true
 
       - name: Upload Serein(Publish)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: LoCyanFrpDesktop_dotnet6_publish
           path: ${{ github.workspace }}\LoCyanFrpDesktop\bin\Debug\net6.0-windows\win-x64\publish
