@@ -18,6 +18,7 @@ using LoCyanFrpDesktop.Dashboard;
 using System.Windows.Forms;
 using static System.Windows.Forms.LinkLabel;
 using System.Windows.Threading;
+using System.Diagnostics;
 
 namespace LoCyanFrpDesktop.Dashboard
 {
@@ -55,6 +56,26 @@ namespace LoCyanFrpDesktop.Dashboard
             }, System.Windows.Threading.DispatcherPriority.Background);
 
         }
-        
+
+
+        private void StopAllProxies_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                int i = ProxyList.PNAPList.Count();
+                for (int j = 0;j < i; j++)
+                {
+                    Process.GetProcessById(ProxyList.PNAPList[j].Pid).Kill();
+                    ProxyList.PNAPList[j].IsRunning = false;
+                }
+            }catch { 
+                Process.Start(new ProcessStartInfo
+                {
+                    UseShellExecute = false,
+                    Verb = "runas",
+                    Arguments = "taskkill /f /im frpc.exe"
+                });
+            }
+        }
     }
 }

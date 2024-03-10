@@ -182,7 +182,7 @@ namespace LoCyanFrpDesktop.Dashboard
 
             if (proxy_id == 0)
             {
-                System.Windows.Forms.MessageBox.Show("无法将隧道名解析为隧道ID，请检查自己的隧道配置", "警告");
+                Logger.MsgBox("无法将隧道名解析为隧道ID，请检查自己的隧道配置", "LocyanFrp", 0, 48, 1);
                 return;
             }
             Access.DashBoard.Navigation.Navigate(1);
@@ -326,8 +326,15 @@ namespace LoCyanFrpDesktop.Dashboard
                 }
                 else
                 {
-                    Process process = Process.GetProcessById(PNAPList[Index].Pid);
-                    process.Close();
+                    try
+                    {
+                        Process.GetProcessById(PNAPList[Index].Pid).Kill();
+                    }catch (Exception ex)
+                    {
+                        CrashInterception.ShowException(ex);
+                    }
+                    Logger.MsgBox("这个隧道成功关闭了哦", "LocyanFrp", 0, 48, 1);
+
                     PNAPList[Index].IsRunning = false;
                 }
             }catch( Exception ex)

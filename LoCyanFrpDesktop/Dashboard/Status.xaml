@@ -10,8 +10,13 @@
       Title="Status">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
         <RichTextBox Name="LogOutput" 
-                     Margin="20" 
+                     Grid.Row="0"
+                     Margin="20,20,20,20" 
                      VerticalAlignment="Stretch" 
                      HorizontalAlignment="Stretch" 
                      IsReadOnly="True"
@@ -19,5 +24,14 @@
                      UndoLimit="0"
                      FontSize="12"
                      />
+        <ui:Button
+            Grid.Row="1" 
+            Name="StopAllProxies"
+            Click="StopAllProxies_Click"
+            Margin="20,0,0,10"
+            Icon="Stop24"
+            >强制结束所有隧道
+
+        </ui:Button>
     </Grid>
 </ui:UiPage>
