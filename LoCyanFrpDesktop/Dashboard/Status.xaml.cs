@@ -19,6 +19,7 @@ using System.Windows.Forms;
 using static System.Windows.Forms.LinkLabel;
 using System.Windows.Threading;
 using System.Diagnostics;
+using System.Threading;
 
 namespace LoCyanFrpDesktop.Dashboard
 {
@@ -27,7 +28,9 @@ namespace LoCyanFrpDesktop.Dashboard
     /// </summary>
     public partial class Status : UiPage
     {
-        
+        public static bool isTaskRunning = false;
+        public static List<string> ListViewList = new List<string>();
+        public static List<string> OldListViewList = new List<string>();
         public Status()
         {
             InitializeComponent();
@@ -39,7 +42,61 @@ namespace LoCyanFrpDesktop.Dashboard
                     (line) => Dispatcher.Invoke(() => Append(LogPreProcess.Color(line)))
                 );
             }
+            //整活写法，别当真
+            if (!isTaskRunning)
+            {   
+                isTaskRunning = true;
+                Task.Run(() => {
+                    while(true)
+                    {   
+                        //wait for implementation
+                        Refresh();
+                        Thread.Sleep(500);
+                    }
+                });
+            }
             //Append(LogPreProcess.Color(LogType.Info, ProxyList.lineFiltered));
+        }
+        public void Refresh()
+        {   
+            try
+            {
+                ListViewList.Clear();
+                for (int i = 0;i < ProxyList.PNAPList.Count(); i++)
+                {
+                    if ((bool)ProxyList.PNAPList[i].IsRunning)
+                    {
+                        ListViewList.Add(ProxyList.Proxieslist[(int)ProxyList.PNAPList[i].ListIndex].ProxyName);
+                    }
+                    
+                }
+                try
+                {
+                    if (ListViewList != OldListViewList)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            ProxiesStarted.ItemsSource = ListViewList;
+                        });
+                        OldListViewList = ListViewList;
+                    }
+                    
+                }
+                catch(Exception e) {
+                    Dispatcher.BeginInvoke(() =>
+                    {
+                        ProxiesStarted.ItemsSource = ListViewList;
+                    }, System.Windows.Threading.DispatcherPriority.Background);
+                    OldListViewList = ListViewList;
+                    CrashInterception.ShowException(e);
+                }
+                
+
+            }
+            catch(Exception ex) 
+            {
+                CrashInterception.ShowException(ex);
+            }
         }
         public void Append(Paragraph paragraph)
         {

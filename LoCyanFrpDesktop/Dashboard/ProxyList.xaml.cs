@@ -33,7 +33,8 @@ namespace LoCyanFrpDesktop.Dashboard
     {
         public ObservableCollection<string> Proxies { get; set; }
 
-        public List<Proxy> Proxieslist { get; set; }
+        public static List<Proxy> Proxieslist { get; set; }
+       
         //public PNAPListComp ListComponents = new PNAPListComp();
         public static List<PNAPListComp> PNAPList = new List<PNAPListComp>();
         public string SelectedProxy { get; set; }
