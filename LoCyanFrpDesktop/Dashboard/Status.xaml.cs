@@ -43,7 +43,7 @@ namespace LoCyanFrpDesktop.Dashboard
                 );
             }
             //整活写法，别当真
-            if (!isTaskRunning)
+            /*if (!isTaskRunning)
             {   
                 isTaskRunning = true;
                 Task.Run(() => {
@@ -54,7 +54,7 @@ namespace LoCyanFrpDesktop.Dashboard
                         Thread.Sleep(500);
                     }
                 });
-            }
+            }*/
             //Append(LogPreProcess.Color(LogType.Info, ProxyList.lineFiltered));
         }
         public void Refresh()
@@ -72,22 +72,18 @@ namespace LoCyanFrpDesktop.Dashboard
                 }
                 try
                 {
-                    if (ListViewList != OldListViewList)
-                    {
-                        Dispatcher.Invoke(() =>
+                    Dispatcher.Invoke(() =>
                         {
                             ProxiesStarted.ItemsSource = ListViewList;
+                            
                         });
-                        OldListViewList = ListViewList;
-                    }
-                    
+                     
                 }
                 catch(Exception e) {
                     Dispatcher.BeginInvoke(() =>
                     {
                         ProxiesStarted.ItemsSource = ListViewList;
-                    }, System.Windows.Threading.DispatcherPriority.Background);
-                    OldListViewList = ListViewList;
+                    });
                     CrashInterception.ShowException(e);
                 }
                 
@@ -124,15 +120,58 @@ namespace LoCyanFrpDesktop.Dashboard
                 {
                     Process.GetProcessById(ProxyList.PNAPList[j].Pid).Kill();
                     ProxyList.PNAPList[j].IsRunning = false;
+                    Refresh();
                 }
-            }catch { 
-                Process.Start(new ProcessStartInfo
+            }catch(Exception ex) { 
+                Console.WriteLine(ex);
+                Process KillProcess = Process.Start(new ProcessStartInfo
                 {
+                    FileName = "taskkill",
                     UseShellExecute = false,
+                    CreateNoWindow = true,
                     Verb = "runas",
-                    Arguments = "taskkill /f /im frpc.exe"
+                    Arguments = " /f /im frpc.exe",
+                    RedirectStandardOutput = true,
+                    StandardOutputEncoding = Encoding.UTF8
                 });
+                KillProcess.BeginOutputReadLine();
+                KillProcess.OutputDataReceived += KillProcess_OutputDataReceived;
+                try
+                {
+                    int i = ProxyList.PNAPList.Count();
+                    for (int j = 0; j < i; j++)
+                    {
+                        ProxyList.PNAPList[j].IsRunning = false;
+                    }
+                    Refresh();
+                }
+                catch { }
             }
+        }
+
+        private void KillProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                //lineFiltered = LogPreProcess.Filter(e.Data);
+                //Console.WriteLine(e.Data);
+                Append(LogPreProcess.Color(LogType.Warn,e.Data));
+            }
+        }
+
+        private void RefreshProxiesList_Click(object sender, RoutedEventArgs e)
+        {
+            Refresh();
+        }
+
+        private void ProxiesStarted_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void ProxiesStarted_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+
         }
     }
 }

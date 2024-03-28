@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 namespace LoCyanFrpDesktop
 {
     internal static class Global
-    {   
-
+    {
+        public static readonly bool DebugMode = Properties.Settings.Default.DebugMode;
         public const string Version = "2.0.0";
         public const string Branch = "Beta";
         public const int Revision = 1;

@@ -64,7 +64,7 @@ namespace LoCyanFrpDesktop.Utils
                     _ => RegExp.Regex.IsMatch(words, @"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+)") ? Brushes.Teal : MainWindow.DarkThemeEnabled ? Brushes.White : Brushes.Black,
                     //_ => Global.Settings.Serein.UseDarkTheme ? Brushes.White : Brushes.Black ,
                 };
-                Console.WriteLine(run);
+                //Console.WriteLine(run);
                 paragraph.Inlines.Add(run);
             }
             return paragraph;

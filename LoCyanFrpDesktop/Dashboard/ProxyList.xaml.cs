@@ -274,8 +274,6 @@ namespace LoCyanFrpDesktop.Dashboard
         {
             if (!string.IsNullOrEmpty(e.Data))
             {
-                //lineFiltered = LogPreProcess.Filter(e.Data);
-                //Console.WriteLine(e.Data);
                 Logger.Output(LogType.Info, e.Data);
             }
         }

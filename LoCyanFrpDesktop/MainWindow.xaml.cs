@@ -29,6 +29,7 @@ using Microsoft.Win32;
 using System.Windows.Media.Effects;
 using LoCyanFrpDesktop.Utils;
 using HandyControl.Tools.Extension;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace LoCyanFrpDesktop
 {
@@ -50,9 +51,14 @@ namespace LoCyanFrpDesktop
             InitializeComponent();
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = new BitmapImage(iconUri);
+            if(Properties.Settings.Default.username != null && Properties.Settings.Default.password != null)
+            {
+                Login(Properties.Settings.Default.username, Properties.Settings.Default.password);
+            }
             InitializeAutoLogin();
             DataContext = this;
             Access.MainWindow = this;
+            
         }
 
         public void OpenSnackbar(string title, string message, SymbolRegular icon)
@@ -125,11 +131,15 @@ namespace LoCyanFrpDesktop
             string username = Username.Text;
             SecureString secure_password = Password.SecurePassword;
             string password = ConvertToUnsecureString(secure_password);
-
+            await Login(username, password);
+            
+        }
+        public async Task Login(string username,string password)
+        {
             // 使用密码，例如验证或其他操作
             if (string.IsNullOrEmpty(password))
             {
-                Logger.MsgBox("解析密码的过程中发生错误, 请联系开发者!", "错误",0,48,0);
+                Logger.MsgBox("解析密码的过程中发生错误, 请联系开发者!", "错误", 0, 48, 0);
                 return;
             }
 
@@ -155,11 +165,11 @@ namespace LoCyanFrpDesktop
 
                         if (responseObject.Status != 0)
                         {
-                            Logger.MsgBox("账号或密码错误！", "警告", 0,48,0);
+                            Logger.MsgBox("账号或密码错误！", "警告", 0, 48, 0);
                         }
                         else
                         {
-                            Logger.MsgBox($"登录成功\n获取到登录Token: {responseObject.Token}", "提示", 0, 47,0);
+                            Logger.MsgBox($"登录成功\n获取到登录Token: {responseObject.Token}", "提示", 0, 47, 0);
                             Properties.Settings.Default.LoginToken = responseObject.Token;
                             Properties.Settings.Default.username = responseObject.UserData.Username;
                             Properties.Settings.Default.FrpToken = responseObject.UserData.FrpToken;
@@ -173,13 +183,13 @@ namespace LoCyanFrpDesktop
                     }
                     catch (HttpRequestException ex)
                     {
-                        Logger.MsgBox($"请求API的过程中出错 \n 报错信息: {ex.Message}", "错误", 0, 48,0);
+                        Logger.MsgBox($"请求API的过程中出错 \n 报错信息: {ex.Message}", "错误", 0, 48, 0);
                     }
                 }
             }
             else
             {
-                Logger.MsgBox("用户名 / 密码不能为空!", "警告", 0, 48,0);
+                Logger.MsgBox("用户名 / 密码不能为空!", "警告", 0, 48, 0);
             }
         }
 
