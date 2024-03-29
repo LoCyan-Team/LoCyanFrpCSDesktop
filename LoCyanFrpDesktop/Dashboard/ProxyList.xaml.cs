@@ -352,31 +352,36 @@ namespace LoCyanFrpDesktop.Dashboard
         {
             throw new NotImplementedException();
         }
-        /*private void InitializeAutoLaunch()
+
+        private void proxies_list_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string filePath = Path.Combine(documentsPath, "auto_launch.ini");
+            StartProxy_Click(sender, e);
+        }
+        /*private void InitializeAutoLaunch()
+{
+   string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+   string filePath = Path.Combine(documentsPath, "auto_launch.ini");
 
-            if (File.Exists(filePath))
-            {
-                string url = File.ReadAllText(filePath);
+   if (File.Exists(filePath))
+   {
+       string url = File.ReadAllText(filePath);
 
-                // 使用正则表达式提取token和id
-                Match match = Regex.Match(url, @"locyanfrp://([^/]+)/([^/]+)");
+       // 使用正则表达式提取token和id
+       Match match = Regex.Match(url, @"locyanfrp://([^/]+)/([^/]+)");
 
-                if (match.Success && match.Groups.Count == 3)
-                {
-                    string token = match.Groups[1].Value;
-                    string id = match.Groups[2].Value;
-                    RunCmdCommand($" -u {token} -p {id}");
-                    File.Delete(filePath);
-                }
-                else
-                {
-                    System.Windows.MessageBox.Show($"自动启动出错 \n url: {url} \n filepath: {filePath}", "警告");
-                }
-            }
+       if (match.Success && match.Groups.Count == 3)
+       {
+           string token = match.Groups[1].Value;
+           string id = match.Groups[2].Value;
+           RunCmdCommand($" -u {token} -p {id}");
+           File.Delete(filePath);
+       }
+       else
+       {
+           System.Windows.MessageBox.Show($"自动启动出错 \n url: {url} \n filepath: {filePath}", "警告");
+       }
+   }
 
-        }*/
+}*/
     }
 }

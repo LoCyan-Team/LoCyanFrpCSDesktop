@@ -46,6 +46,7 @@ namespace LoCyanFrpDesktop
             //string Password;
             // 处理启动参数
             string[] args = e.Args;
+            
             if (args.Length > 0)
             {   
                 int i = 0;
@@ -84,6 +85,15 @@ namespace LoCyanFrpDesktop
                 // 解析和处理参数
                 // 这里可以根据参数的内容执行不同的操作
                 ProcessUrlParameters(args);
+                for (int x = 0; x < args.Count(); x++) {
+                    if (x != args.Count() - 1)
+                    {
+                        Console.Write(args[x]);
+                    }
+                    else { 
+                        Console.WriteLine(args[x]);
+                    }
+                }
             }
         }
         private static void CurrentDomain_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
