@@ -42,7 +42,7 @@ namespace LoCyanFrpDesktop
         private InfoResponseObjectt UserInfo;
         string username_auto;
         string token_auto;
-        private static bool islogin = false;
+        public static bool islogin = false;
         public static DashBoard DashBoard;
         //public static Snackbar Snackbar = new Snackbar();
         public MainWindow()
@@ -51,7 +51,7 @@ namespace LoCyanFrpDesktop
             InitializeComponent();
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = new BitmapImage(iconUri);
-            if(Properties.Settings.Default.username != null && Properties.Settings.Default.password != null)
+            if(Global.LoginedByConsole && Properties.Settings.Default.username != null && Properties.Settings.Default.password != null)
             {
                 Login(Properties.Settings.Default.username, Properties.Settings.Default.password);
             }
@@ -176,6 +176,7 @@ namespace LoCyanFrpDesktop
                             string path = ".//session.token";
                             string text = $"{responseObject.UserData.Username}|{responseObject.Token}";
                             File.WriteAllText(path, text);
+                            islogin = true;
                             DashBoard = new DashBoard();
                             DashBoard.Show();
                             Close();

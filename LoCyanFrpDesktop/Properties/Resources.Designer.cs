@@ -74,5 +74,13 @@ namespace LoCyanFrpDesktop.Properties
                 return ResourceManager.GetString("BuildInfo", resourceCulture);
             }
         }
+        public static byte[] Updater
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Updater", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,6 +48,22 @@ namespace LoCyanFrpDesktop.Dashboard
                 Properties.Settings.Default.FrpcPath = FrpcPath.Text;
 
             }
+        }
+
+        private void SignOut_Click(object sender, RoutedEventArgs e)
+        {
+            Access.DashBoard.Close();
+            if (File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session.token"))) {
+                File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session.token"));
+
+            }
+            
+            Properties.Settings.Default.FrpToken = null;
+            Properties.Settings.Default.LoginToken = null;
+            Properties.Settings.Default.password = null;
+            MainWindow.islogin = false;
+            Access.MainWindow.Width = double.NaN;
+            Access.MainWindow.Show();
         }
     }
 }

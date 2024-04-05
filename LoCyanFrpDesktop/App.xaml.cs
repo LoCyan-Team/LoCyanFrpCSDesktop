@@ -71,6 +71,7 @@ namespace LoCyanFrpDesktop
                     {
                         LoCyanFrpDesktop.Properties.Settings.Default.username = Username;
                         LoCyanFrpDesktop.Properties.Settings.Default.password = Password;
+                        Global.LoginedByConsole = true;
                     }
                 }
                 
