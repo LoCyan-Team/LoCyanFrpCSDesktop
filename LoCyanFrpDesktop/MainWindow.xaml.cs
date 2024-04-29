@@ -265,9 +265,16 @@ namespace LoCyanFrpDesktop
 
         public void UiWindow_Closing(object sender, CancelEventArgs e)
         {
+            if (islogin) {
                 e.Cancel = true;
                 ShowInTaskbar = true;
                 Hide();
+            }
+            else
+            {
+                Exit_Click(sender,null);
+            }
+                
         }
         public void UiWindow_StateChanged(object sender, EventArgs e)
         {/*

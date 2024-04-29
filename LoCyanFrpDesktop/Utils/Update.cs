@@ -1,6 +1,7 @@
 ﻿using LoCyanFrpDesktop.Properties;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using LoCyanFrpDesktop.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,11 +11,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using static Microsoft.Exchange.WebServices.Data.SearchFilter;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Windows.Shapes;
 using System.Timers;
+using JToken = Newtonsoft.Json.Linq.JToken;
 
 namespace LoCyanFrpDesktop.Utils
 {
