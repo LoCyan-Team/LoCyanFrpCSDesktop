@@ -47,7 +47,7 @@ namespace LoCyanFrpDesktop.Utils
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
             InitDownloader();
-            this.Owner = this;
+            //this.Owner = this;
             StartDownload();
             
         }
@@ -185,13 +185,17 @@ namespace LoCyanFrpDesktop.Utils
                     File.Delete(Path.Combine(DownloadPath, "frpc.exe"));
                     File.Move(Path.Combine(DownloadPath, "Temp", FolderName, "frpc.exe"), Path.Combine(DownloadPath, "frpc.exe"));
                 }
+                else
+                {
+                    File.Move(Path.Combine(DownloadPath, "Temp", FolderName, "frpc.exe"), Path.Combine(DownloadPath, "frpc.exe"));
+                }
                 string path = Path.Combine(DownloadPath, "frpc.exe");
                 try
                 {
                     Access.Settings.FrpcPath.Text = path;
                 }catch (Exception ex)
                 {
-                    CrashInterception.ShowException(ex);
+                    //CrashInterception.ShowException(ex);
                 }
                 Properties.Settings.Default.FrpcPath = path;
                 var ConfigPath = Path.Combine(DownloadPath, "FrpcPath.conf");
@@ -245,7 +249,7 @@ namespace LoCyanFrpDesktop.Utils
         {
             try
             {
-                await DownloadService.DownloadFileTaskAsync(url, Path.Combine(path + "frpc.temp")).ConfigureAwait(false);
+                await DownloadService.DownloadFileTaskAsync(url, Path.Combine(path + "frpc.temp"));
             }catch(Exception ex)
             {
                 CrashInterception.ShowException(ex);

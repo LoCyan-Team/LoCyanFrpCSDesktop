@@ -55,10 +55,34 @@ namespace LoCyanFrpDesktop
             {
                 Login(Properties.Settings.Default.username, Properties.Settings.Default.password);
             }
+            CheckNetworkAvailability();
             InitializeAutoLogin();
             DataContext = this;
             Access.MainWindow = this;
             
+        }
+
+        private async void CheckNetworkAvailability()
+        {
+            var a = () =>
+            {
+                MessageBox.Show("请检查您的网络连接!");
+                Environment.Exit(0);
+            };
+            using (HttpClient httpClient = new HttpClient()) {
+                try
+                {
+                    HttpResponseMessage httpResponseMessage = await httpClient.GetAsync("https://api.locyanfrp.cn");
+                    if (!httpResponseMessage.IsSuccessStatusCode)
+                    {
+                        a();
+                    }
+                }
+                catch (Exception ignored) {
+                    a();
+                }
+                
+            }   
         }
 
         public void OpenSnackbar(string title, string message, SymbolRegular icon)
