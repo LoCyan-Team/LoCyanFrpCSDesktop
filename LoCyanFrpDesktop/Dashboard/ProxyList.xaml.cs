@@ -27,6 +27,11 @@ using System.Drawing.Printing;
 using System.Xml.Linq;
 using HandyControl.Tools.Extension;
 using MenuItem = Wpf.Ui.Controls.MenuItem;
+using Wpf.Ui.Appearance;
+using System.Reflection;
+using Wpf.Ui.Styles.Controls;
+using ContextMenu2 = Wpf.Ui.Styles.Controls.ContextMenu;
+using ContextMenu = System.Windows.Controls.ContextMenu;
 
 
 namespace LoCyanFrpDesktop.Dashboard
@@ -45,6 +50,7 @@ namespace LoCyanFrpDesktop.Dashboard
         public string SelectedProxy { get; set; }
         public static string lineFiltered;
         public static object BackgroundColor;
+        public static ContextMenu BackgroundMenu;
         public ProxyList()
         {
             InitializeComponent();
@@ -52,9 +58,10 @@ namespace LoCyanFrpDesktop.Dashboard
             //Wait For Rewrite.
             //InitializeAutoLaunch();
             DataContext = this;
-            title_username.Text = $"欢迎回来，{Properties.Settings.Default.username}";
+            title_username.Text += Properties.Settings.Default.username;
             Resources["BorderColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray;
-            BackgroundColor = Resources["ControlFillColorDefaultBrush"];
+            //BackgroundColor = Resources["ControlFillColorDefaultBrush"];
+            BackgroundMenu = new();
         }
 
         private async void InitializeProxiesAsync()
@@ -120,10 +127,19 @@ namespace LoCyanFrpDesktop.Dashboard
                 Console.WriteLine(i);
                 Dispatcher.Invoke(() =>
                 {
+                    var a = new ProxyCard(responseObject.Proxies[i]);
 
-                    //ListBorder.Child = new ProxyCard(responseObject.Proxies[i]);
-                    ListPanel.Children.Add(new ProxyCard(responseObject.Proxies[i]));
-
+                    ListPanel.Children.Add(a);
+                    /*ListPanel.Children.Add(new Card()
+                    {
+                        //Background = new SolidColorBrush(Colors.White),
+                        Padding = new Thickness(10),
+                        Margin = new Thickness(0, 0, 10, 0),
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        MinHeight = 50,
+                        MinWidth = 100
+                    });*/
 
                 });
 
@@ -260,9 +276,9 @@ namespace LoCyanFrpDesktop.Dashboard
 
         }
 
-        
 
-        
+
+
         /*private void InitializeAutoLaunch()
 {
    string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -291,12 +307,12 @@ namespace LoCyanFrpDesktop.Dashboard
 }*/
         private void ListCardClickHandler(object sender, MouseButtonEventArgs e)
         {
-
+            //new Card.ContextMenu();
         }
 
         private void Card_MouseDown(object sender, MouseButtonEventArgs e)
         {
-
+            
         }
     }
     public class GetProxiesResponseObject
@@ -341,46 +357,78 @@ namespace LoCyanFrpDesktop.Dashboard
             return $"{this.ProxyName} {ProxyType} {LocalIp}:{LocalPort}-->{Domain}:{RemotePort}";
         }
     }
-    public class ProxyCard : Wpf.Ui.Controls.Card
+    public class ProxyCard : Border
     {
+
         public ProxyCard(Proxy ProxyInfo)
         {
-            this.Background = new SolidColorBrush(Colors.White);
+            //DefaultStyleKeyProperty.OverrideMetadata(typeof(ProxyCard), new FrameworkPropertyMetadata(typeof(ProxyCard)));
+            //this.Style.BasedOn = (Style)Application.Current.Resources["Card"];
+
+            //this.OverridesDefaultStyle = true;
+            //this.Style = ProxyList.card.Style;
+            //Theme.Apply(ThemeType.Light);
+            this.Background = new SolidColorBrush(MainWindow.DarkThemeEnabled ? Color.FromRgb(53, 53, 53) : Color.FromRgb(210, 210, 210));
             //this.Background = new SolidColorBrush(!string.IsNullOrEmpty((string)ProxyList.BackgroundColor) ? (Color)ProxyList.BackgroundColor : Colors.Gray);
             //this.Background = new SolidColorBrush((Color)ProxyList.BackgroundColor);
+            this.CornerRadius = new CornerRadius(5);
             this.Padding = new Thickness(10);
             this.Margin = new Thickness(0, 0, 10, 0);
-            this.HorizontalAlignment = HorizontalAlignment.Stretch;
+            this.HorizontalAlignment = HorizontalAlignment.Left;
             this.VerticalAlignment = VerticalAlignment.Stretch;
             this.MinHeight = 50;
             this.MinWidth = 100;
-            StackPanel stackPanel = new StackPanel();
-            DockPanel dockPanel = new DockPanel();
-            this.AddChild(stackPanel);
+            StackPanel stackPanel = new StackPanel()
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Left,
+            };
+            DockPanel dockPanel = new DockPanel() {
+                VerticalAlignment = VerticalAlignment.Center,
+                MinWidth = 100,
+            };
+            this.Child = stackPanel;
+            //this.AddChild(stackPanel);
+            //this.AddChild();
             stackPanel.Children.Add(dockPanel);
             dockPanel.Children.Add(new TextBlock()
             {
-                Text = $"{ProxyInfo.Id} {ProxyInfo.ProxyName}"
+                Text = $"{ProxyInfo.Id} {ProxyInfo.ProxyName}",
+
+
             });
 
-            this.AddChild(new ProxyMenu(ProxyInfo.Id));
+            //dockPanel.Children.Add();
+
+            ProxyMenu temp = new ProxyMenu();
+            temp.Id = ProxyInfo.Id;
+            this.ContextMenu = temp;
+            //dockPanel.Children.Add(temp);
+            //this.AddChild(temp);
+
             this.MouseRightButtonDown += this.OnMouseRightButtonDown;
 
         }
         private void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            ContextMenu.Show();
+        {   
+            
+            this.ContextMenu.Show();
         }
         private void ProxyCard_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             //StartProxy_Click(sender, e);
         }
-        
+
     }
     public class ProxyMenu : ContextMenu
-    {
-        public ProxyMenu(int Id)
+    {   
+        public int Id { get; set; }
+        
+        public ProxyMenu()
         {
+            this.Style = ProxyList.BackgroundMenu.Style;
+            //this.Style = ProxyList.DefaultStyleKeyProperty;
+            //this.OverridesDefaultStyle = true;
             /*
              <ContextMenu Name="ListMenu">
                             <ui:MenuItem Header="刷新" Click="Refresh_Click"/>
@@ -393,6 +441,8 @@ namespace LoCyanFrpDesktop.Dashboard
                         </ContextMenu>
              
              */
+            //this.Background = new SolidColorBrush(Color.FromRgb(45,45,45));
+
             MenuItem Refresh = new MenuItem()
             {
                 Header = "刷新",
@@ -416,8 +466,18 @@ namespace LoCyanFrpDesktop.Dashboard
             DeleteProxy.Click += DeleteProxy_Click;
             StartProxy.Click += StartProxy_Click;
             StopProxy.Click += StopProxy_Click;
-
-
+            this.Items.Add(Refresh);
+            this.Items.Add(new Separator());
+            this.Items.Add(CreateNewProxy);
+            this.Items.Add(DeleteProxy);
+            this.Items.Add(new Separator());
+            this.Items.Add(StartProxy);
+            this.Items.Add(StopProxy);
+            this.BorderBrush = Brushes.Transparent;
+            this.BorderThickness = new Thickness(1);
+            //contextMenu.Margin = new Thickness(5);
+            //this.CornerRadius = new CornerRadius(5);
+            
         }
         private void StartProxy_Click(object sender, RoutedEventArgs e)
         {/*
@@ -490,4 +550,4 @@ namespace LoCyanFrpDesktop.Dashboard
 }
 
 
-BreakAutoCompileBecauseTheRewriteIsNOTFinished
+//BreakAutoCompileBecauseTheRewriteIsNOTFinished
