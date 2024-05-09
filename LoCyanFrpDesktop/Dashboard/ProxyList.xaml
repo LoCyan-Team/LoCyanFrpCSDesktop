@@ -8,6 +8,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ProxyList">
+
     <Grid Margin="0,0,20,0">
         <Grid.Resources>
             <SolidColorBrush x:Key="BorderColor"/>
@@ -32,10 +33,8 @@
                 Padding="10,5"
                 CornerRadius="8"
                 >
-                    <StackPanel >
-                        <DockPanel Name="ListPanel">
-                            
-                        </DockPanel>
+                    <StackPanel Name="ListPanel">
+                        
                     </StackPanel>
                 <!--
                 <ListView SelectionChanged="Proxies_List_SelectionChanged" Name="proxies_list"  HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10" ContextMenuOpening="ListView_ContextMenuOpening" MouseDown="ListView_MouseDown" MouseDoubleClick="proxies_list_MouseDoubleClick">
@@ -50,12 +49,11 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <ui:Card Grid.Column="0" Padding="10" Margin="10,0,0,0" MouseDown="Card_MouseDown" >
+                <ui:Card Grid.Column="0" Padding="10" Margin="10,0,0,0" MouseDown="Card_MouseDown">
                     
                     <StackPanel>
                         <DockPanel>
                             <TextBlock Name="title_username" Text="欢迎回来，"/>
-                            
                         </DockPanel>
                     </StackPanel>
                     
