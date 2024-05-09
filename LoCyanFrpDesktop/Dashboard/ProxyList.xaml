@@ -31,17 +31,22 @@
                 Grid.Column="1"
                 Margin="0"
                 Padding="10,5"
-                CornerRadius="8"
-                >
-                    <StackPanel Name="ListPanel">
-                        
-                    </StackPanel>
-                <!--
+                Background="{DynamicResource ControlFillColorDefaultBrush}"
+                CornerRadius="8">
+                
                 <ListView SelectionChanged="Proxies_List_SelectionChanged" Name="proxies_list"  HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10" ContextMenuOpening="ListView_ContextMenuOpening" MouseDown="ListView_MouseDown" MouseDoubleClick="proxies_list_MouseDoubleClick">
                     <ListView.ContextMenu>
-                        
+                        <ContextMenu Name="ListMenu">
+                            <ui:MenuItem Header="刷新" Click="Refresh_Click"/>
+                            <Separator/>
+                            <ui:MenuItem Header="新建隧道" Click="CreateNewProxy_Click"/>
+                            <ui:MenuItem Header="删除隧道" Click="DeleteProxy_Click"/>
+                            <Separator/>
+                            <ui:MenuItem Header="启动隧道" Click="StartProxy_Click"/>
+                            <ui:MenuItem Header="停止隧道" Click="StopProxy_Click"/>
+                        </ContextMenu>
                     </ListView.ContextMenu>
-                </ListView>-->
+                </ListView>
                 </Border>
             </Grid>
             <Grid Grid.Row="1">
@@ -49,8 +54,7 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <ui:Card Grid.Column="0" Padding="10" Margin="10,0,0,0" MouseDown="Card_MouseDown">
-                    
+                <ui:Card Grid.Column="0" Padding="10">
                     <StackPanel>
                         <DockPanel>
                             <TextBlock Name="title_username" Text="欢迎回来，"/>
