@@ -23,6 +23,11 @@ using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using System.IO;
 using static LoCyanFrpDesktop.Utils.PNAP;
+using System.Drawing.Printing;
+using System.Xml.Linq;
+using HandyControl.Tools.Extension;
+using MenuItem = Wpf.Ui.Controls.MenuItem;
+
 
 namespace LoCyanFrpDesktop.Dashboard
 {
@@ -34,11 +39,12 @@ namespace LoCyanFrpDesktop.Dashboard
         public ObservableCollection<string> Proxies { get; set; }
 
         public static List<Proxy> Proxieslist { get; set; }
-       
+
         //public PNAPListComp ListComponents = new PNAPListComp();
         public static List<PNAPListComp> PNAPList = new List<PNAPListComp>();
         public string SelectedProxy { get; set; }
         public static string lineFiltered;
+        public static object BackgroundColor;
         public ProxyList()
         {
             InitializeComponent();
@@ -48,7 +54,7 @@ namespace LoCyanFrpDesktop.Dashboard
             DataContext = this;
             title_username.Text = $"欢迎回来，{Properties.Settings.Default.username}";
             Resources["BorderColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray;
-            
+            BackgroundColor = Resources["ControlFillColorDefaultBrush"];
         }
 
         private async void InitializeProxiesAsync()
@@ -103,73 +109,38 @@ namespace LoCyanFrpDesktop.Dashboard
 
             if (responseObject.Status != 0)
             {
-                Logger.MsgBox("获取隧道失败，请重启软件重新登陆账号", "LocyanFrp",0,48,1);
+                Logger.MsgBox("获取隧道失败，请重启软件重新登陆账号", "LocyanFrp", 0, 48, 1);
                 return null;
             }
 
             // 初始化列表 proxiesListInName
             List<string> proxiesListInName = new List<string>();
-            foreach (var proxy in responseObject.Proxies)
+            for (int i = 0; i < responseObject.Proxies.Count; i++)
             {
-                proxiesListInName.Add(proxy.ProxyName);
-            }
+                Console.WriteLine(i);
+                Dispatcher.Invoke(() =>
+                {
 
+                    //ListBorder.Child = new ProxyCard(responseObject.Proxies[i]);
+                    ListPanel.Children.Add(new ProxyCard(responseObject.Proxies[i]));
+
+
+                });
+
+            }
             Proxieslist = responseObject.Proxies;
-            Dispatcher.Invoke(() =>
-            {
-                proxies_list.ItemsSource = Proxieslist;
-            });
+
             var proxies = new ObservableCollection<string>(proxiesListInName);
             return proxies;
         }
 
-        public class Proxy
-        {
-            public int Id { get; set; }
 
-            [JsonProperty("proxy_name")]
-            public string ProxyName { get; set; }
 
-            [JsonProperty("proxy_type")]
-            public string ProxyType { get; set; }
 
-            [JsonProperty("local_ip")]
-            public string LocalIp { get; set; }
-
-            [JsonProperty("local_port")]
-            public int LocalPort { get; set; }
-
-            [JsonProperty("remote_port")]
-            public string RemotePort { get; set; }
-
-            [JsonProperty("use_compression")]
-            public bool UseCompression { get; set; }
-
-            [JsonProperty("use_encryption")]
-            public bool UseEncryption { get; set; }
-            [JsonProperty("domain")]
-            public string Domain { get; set; }
-            public int Node { get; set; }
-
-            [JsonProperty("icp")]
-            public object Icp { get; set; } // icp 字段可能为 null，使用 object 类型表示
-            public override string ToString()
-            {
-                return $"{this.ProxyName} {ProxyType} {LocalIp}:{LocalPort}-->{Domain}:{RemotePort}";
-            }
-        }
-
-        public class GetProxiesResponseObject
-        {
-            public int Status { get; set; }
-            public string Message { get; set; }
-            public int Count { get; set; }
-            public List<Proxy> Proxies { get; set; }
-        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
-        {   
-            
+        {
+
             string proxy_name = SelectedProxy;
             int proxy_id = 0;
             foreach (var item in Proxieslist)
@@ -201,11 +172,11 @@ namespace LoCyanFrpDesktop.Dashboard
             {
 
             }
-            RunCmdCommand($" -u {Properties.Settings.Default.FrpToken} -p ",proxy_id, proxies_list.SelectedIndex);
+            //RunCmdCommand($" -u {Properties.Settings.Default.FrpToken} -p ",proxy_id, proxies_list.SelectedIndex);
 
         }
 
-        private void Proxies_List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        /*private void Proxies_List_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // 如果需要判断是否有选中项
             if (proxies_list.SelectedItem != null)
@@ -216,9 +187,9 @@ namespace LoCyanFrpDesktop.Dashboard
             {
                 // 没有选中项的处理逻辑
             }
-        }
+        }*/
 
-        private void RunCmdCommand(string command,int ProxyID,int SelectionIndex)
+        private void RunCmdCommand(string command, int ProxyID, int SelectionIndex)
         {
             // 创建一个 ProcessStartInfo 对象
             ProcessStartInfo psi = new ProcessStartInfo
@@ -238,7 +209,7 @@ namespace LoCyanFrpDesktop.Dashboard
             try
             {
                 if (!PNAPList.Any(Process => Process.ProcessName == ProxyID))
-                {   
+                {
 
                     PNAPList.Add(new PNAPListComp() { ProcessName = ProxyID, IsRunning = true, Pid = _FrpcProcess.Id, ListIndex = SelectionIndex });
                 }
@@ -249,11 +220,12 @@ namespace LoCyanFrpDesktop.Dashboard
                     PNAPList[Index].ListIndex = SelectionIndex;
                     PNAPList[Index].Pid = _FrpcProcess.Id;
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 PNAPList.Add(new PNAPListComp() { ProcessName = ProxyID, IsRunning = true, Pid = _FrpcProcess.Id, ListIndex = SelectionIndex });
             }
-            
+
             _FrpcProcess.OutputDataReceived += SortOutputHandler;
             // 读取标准输出和标准错误输出
             //string output = process.StandardOutput.ReadToEnd(); 
@@ -288,75 +260,9 @@ namespace LoCyanFrpDesktop.Dashboard
 
         }
 
-        private void Refresh_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-        private void StartProxy_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                int Index = PNAPList.FindIndex(Process => Process.ListIndex == proxies_list.SelectedIndex);
-                if (!(bool)PNAPList[Index].IsRunning)
-                {
-                    Button_Click(sender, e);
-                }
-                else
-                {
-                    Logger.MsgBox("这个隧道已经启动了哦", "LocyanFrp", 0, 48, 1);
-                }
-            }catch(Exception ex)
-            {   
-                Button_Click(sender, e);
-            }
-            
-            
-        }
-        private void StopProxy_Click(Object sender, RoutedEventArgs e)
-        {
-            //我在写什么，我不知道我在写些什么
-            try
-            {
-                int Index = PNAPList.FindIndex(Process => Process.ListIndex == proxies_list.SelectedIndex);
-                if (!(bool)PNAPList[Index].IsRunning)
-                {   
+        
 
-                    Logger.MsgBox("这个隧道并没有启动哦", "LocyanFrp", 0, 48, 1);
-                }
-                else
-                {
-                    try
-                    {
-                        Process.GetProcessById(PNAPList[Index].Pid).Kill();
-                    }catch (Exception ex)
-                    {
-                        CrashInterception.ShowException(ex);
-                    }
-                    Logger.MsgBox("这个隧道成功关闭了哦", "LocyanFrp", 0, 48, 1);
-
-                    PNAPList[Index].IsRunning = false;
-                }
-            }catch( Exception ex)
-            {   
-                CrashInterception.ShowException(ex);
-                Logger.MsgBox("这个隧道并没有启动哦", "LocyanFrp", 0, 48, 1);
-            }
-            
-        }
-
-        private void DeleteProxy_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-        private void CreateNewProxy_Click(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void proxies_list_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            StartProxy_Click(sender, e);
-        }
+        
         /*private void InitializeAutoLaunch()
 {
    string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -383,5 +289,205 @@ namespace LoCyanFrpDesktop.Dashboard
    }
 
 }*/
+        private void ListCardClickHandler(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void Card_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
     }
+    public class GetProxiesResponseObject
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public int Count { get; set; }
+        public List<Proxy> Proxies { get; set; }
+    }
+    public class Proxy
+    {
+        public int Id { get; set; }
+
+        [JsonProperty("proxy_name")]
+        public string ProxyName { get; set; }
+
+        [JsonProperty("proxy_type")]
+        public string ProxyType { get; set; }
+
+        [JsonProperty("local_ip")]
+        public string LocalIp { get; set; }
+
+        [JsonProperty("local_port")]
+        public int LocalPort { get; set; }
+
+        [JsonProperty("remote_port")]
+        public string RemotePort { get; set; }
+
+        [JsonProperty("use_compression")]
+        public bool UseCompression { get; set; }
+
+        [JsonProperty("use_encryption")]
+        public bool UseEncryption { get; set; }
+        [JsonProperty("domain")]
+        public string Domain { get; set; }
+        public int Node { get; set; }
+
+        [JsonProperty("icp")]
+        public object Icp { get; set; } // icp 字段可能为 null，使用 object 类型表示
+        public override string ToString()
+        {
+            return $"{this.ProxyName} {ProxyType} {LocalIp}:{LocalPort}-->{Domain}:{RemotePort}";
+        }
+    }
+    public class ProxyCard : Wpf.Ui.Controls.Card
+    {
+        public ProxyCard(Proxy ProxyInfo)
+        {
+            this.Background = new SolidColorBrush(Colors.White);
+            //this.Background = new SolidColorBrush(!string.IsNullOrEmpty((string)ProxyList.BackgroundColor) ? (Color)ProxyList.BackgroundColor : Colors.Gray);
+            //this.Background = new SolidColorBrush((Color)ProxyList.BackgroundColor);
+            this.Padding = new Thickness(10);
+            this.Margin = new Thickness(0, 0, 10, 0);
+            this.HorizontalAlignment = HorizontalAlignment.Stretch;
+            this.VerticalAlignment = VerticalAlignment.Stretch;
+            this.MinHeight = 50;
+            this.MinWidth = 100;
+            StackPanel stackPanel = new StackPanel();
+            DockPanel dockPanel = new DockPanel();
+            this.AddChild(stackPanel);
+            stackPanel.Children.Add(dockPanel);
+            dockPanel.Children.Add(new TextBlock()
+            {
+                Text = $"{ProxyInfo.Id} {ProxyInfo.ProxyName}"
+            });
+
+            this.AddChild(new ProxyMenu(ProxyInfo.Id));
+            this.MouseRightButtonDown += this.OnMouseRightButtonDown;
+
+        }
+        private void OnMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ContextMenu.Show();
+        }
+        private void ProxyCard_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            //StartProxy_Click(sender, e);
+        }
+        
+    }
+    public class ProxyMenu : ContextMenu
+    {
+        public ProxyMenu(int Id)
+        {
+            /*
+             <ContextMenu Name="ListMenu">
+                            <ui:MenuItem Header="刷新" Click="Refresh_Click"/>
+                            <Separator/>
+                            <ui:MenuItem Header="新建隧道" Click="CreateNewProxy_Click"/>
+                            <ui:MenuItem Header="删除隧道" Click="DeleteProxy_Click"/>
+                            <Separator/>
+                            <ui:MenuItem Header="启动隧道" Click="StartProxy_Click"/>
+                            <ui:MenuItem Header="停止隧道" Click="StopProxy_Click"/>
+                        </ContextMenu>
+             
+             */
+            MenuItem Refresh = new MenuItem()
+            {
+                Header = "刷新",
+                
+                
+            };
+            MenuItem CreateNewProxy = new MenuItem() {
+                Header = "新建隧道"
+            };
+            MenuItem DeleteProxy = new MenuItem() {
+                Header = "删除隧道"
+            };
+            MenuItem StartProxy = new MenuItem() {
+                Header = "启动隧道"
+            };
+            MenuItem StopProxy = new MenuItem() {
+                Header = "停止隧道"
+            };
+            Refresh.Click += Refresh_Click;
+            CreateNewProxy.Click += CreateNewProxy_Click;
+            DeleteProxy.Click += DeleteProxy_Click;
+            StartProxy.Click += StartProxy_Click;
+            StopProxy.Click += StopProxy_Click;
+
+
+        }
+        private void StartProxy_Click(object sender, RoutedEventArgs e)
+        {/*
+            try
+            {
+                int Index = PNAPList.FindIndex(Process => Process.ListIndex == proxies_list.SelectedIndex);
+                if (!(bool)PNAPList[Index].IsRunning)
+                {
+                    Button_Click(sender, e);
+                }
+                else
+                {
+                    Logger.MsgBox("这个隧道已经启动了哦", "LocyanFrp", 0, 48, 1);
+                }
+            }catch(Exception ex)
+            {   
+                Button_Click(sender, e);
+            }
+           */
+
+        }
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+        
+        private void StopProxy_Click(Object sender, RoutedEventArgs e)
+        {
+            //我在写什么，我不知道我在写些什么w
+            /*
+            try
+            {
+                int Index = PNAPList.FindIndex(Process => Process.ListIndex == proxies_list.SelectedIndex);
+                if (!(bool)PNAPList[Index].IsRunning)
+                {   
+
+                    Logger.MsgBox("这个隧道并没有启动哦", "LocyanFrp", 0, 48, 1);
+                }
+                else
+                {
+                    try
+                    {
+                        Process.GetProcessById(PNAPList[Index].Pid).Kill();
+                    }catch (Exception ex)
+                    {
+                        CrashInterception.ShowException(ex);
+                    }
+                    Logger.MsgBox("这个隧道成功关闭了哦", "LocyanFrp", 0, 48, 1);
+
+                    PNAPList[Index].IsRunning = false;
+                }
+            }catch( Exception ex)
+            {   
+                CrashInterception.ShowException(ex);
+                Logger.MsgBox("这个隧道并没有启动哦", "LocyanFrp", 0, 48, 1);
+            }*/
+
+        }
+
+        private void DeleteProxy_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+        private void CreateNewProxy_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
 }
+
+
+BreakAutoCompileBecauseTheRewriteIsNOTFinished
