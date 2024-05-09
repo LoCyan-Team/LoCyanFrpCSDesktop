@@ -4,11 +4,16 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoCyanFrpDesktop", "LoCyanFrpDesktop\LoCyanFrpDesktop.csproj", "{D1D59A31-105D-4B83-A49D-B9F761336995}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{1C846730-8BC3-49D4-8786-106AF8C4D160}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Updater", "Updater\Updater.csproj", "{1C846730-8BC3-49D4-8786-106AF8C4D160}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LoCyanFrp", "LoCyanFrp", "{0301C876-91BE-4AE9-92C9-254EBFA8B940}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{7A9FD3C3-52EE-4162-B97A-6F7EB2F1821C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{642C59C0-F62F-4AD8-9951-1625AED50385}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
