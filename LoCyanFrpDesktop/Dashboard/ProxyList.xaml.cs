@@ -121,6 +121,7 @@ namespace LoCyanFrpDesktop.Dashboard
                 {
                     CrashInterception.ShowException(ex);
                     return null;
+
                 }
             }
 
