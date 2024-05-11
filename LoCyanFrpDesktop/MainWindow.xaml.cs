@@ -204,6 +204,8 @@ namespace LoCyanFrpDesktop
                             DashBoard = new DashBoard();
                             DashBoard.Show();
                             Close();
+                            Access.DashBoard.CheckIfFrpcInstalled();
+
                         }
                     }
                     catch (HttpRequestException ex)
