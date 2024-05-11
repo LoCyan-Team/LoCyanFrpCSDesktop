@@ -10,33 +10,14 @@
       Title="Status">
 
     <Grid >
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" Margin="20,20,0,15" Visibility="Visible">
-            <Border
-                 Grid.Column="1"
-                 Margin="0"
-                 Padding="10,5"
-                 Background="{DynamicResource ControlFillColorDefaultBrush}"
-                 CornerRadius="8" Width="200">
-                <ListView Name="ProxiesStarted" MouseDown="ProxiesStarted_MouseDown" DataContextChanged="ProxiesStarted_DataContextChanged">
-                    <ListView.ContextMenu>
-                        <ContextMenu>
-                            <ui:MenuItem Header="停止此隧道"/>
-                        </ContextMenu>
-                    </ListView.ContextMenu>
-                </ListView>
-            </Border>
-        </Grid>
-        <Grid Grid.Column="1" >
+        
+        <Grid Margin="20,0,0,15">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <RichTextBox Name="LogOutput" 
-                         Margin="20,20,20,20" 
+                         Margin="20" 
                          Grid.Row="0"
                          VerticalAlignment="Stretch" 
                          HorizontalAlignment="Stretch" 
@@ -51,15 +32,15 @@
                     <ColumnDefinition Width="20"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <ui:Button
+                <!--<ui:Button
                     Grid.Column="0"
                     Name="RefreshProxiesList"
                     Click="RefreshProxiesList_Click"
                     Icon="ChevronCircleDown24">
                     刷新已启动隧道列表
-                </ui:Button>
+                </ui:Button>-->
                 <ui:Button
-                    Grid.Column="2"
+                    Grid.Column="0"
                         Name="StopAllProxies"
                         Click="StopAllProxies_Click"
                         Icon="Stop24"

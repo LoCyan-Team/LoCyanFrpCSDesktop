@@ -56,7 +56,7 @@ namespace LoCyanFrpDesktop.Dashboard
                 });
             }*/
             //Append(LogPreProcess.Color(LogType.Info, ProxyList.lineFiltered));
-        }
+        }/*
         public void Refresh()
         {   
             try
@@ -93,7 +93,7 @@ namespace LoCyanFrpDesktop.Dashboard
             {
                 CrashInterception.ShowException(ex);
             }
-        }
+        }*/
         public void Append(Paragraph paragraph)
         {
             
@@ -120,7 +120,7 @@ namespace LoCyanFrpDesktop.Dashboard
                 {
                     Process.GetProcessById(ProxyList.PNAPList[j].Pid).Kill();
                     ProxyList.PNAPList[j].IsRunning = false;
-                    Refresh();
+                    //Refresh();
                 }
             }catch(Exception ex) { 
                 Console.WriteLine(ex);
@@ -143,12 +143,15 @@ namespace LoCyanFrpDesktop.Dashboard
                     {
                         ProxyList.PNAPList[j].IsRunning = false;
                     }
-                    Refresh();
+                    //Refresh();
                 }
                 catch { }
+                for (int j = 0; j < ProxyList.Cards.Count; j++) {
+                    ProxyList.Cards[j].IndicatorLight.Stroke = Brushes.Gray;
+                }
             }
         }
-
+        
         private void KillProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             if (!string.IsNullOrEmpty(e.Data))
@@ -161,7 +164,7 @@ namespace LoCyanFrpDesktop.Dashboard
 
         private void RefreshProxiesList_Click(object sender, RoutedEventArgs e)
         {
-            Refresh();
+            //Refresh();
         }
 
         private void ProxiesStarted_MouseDown(object sender, MouseButtonEventArgs e)
