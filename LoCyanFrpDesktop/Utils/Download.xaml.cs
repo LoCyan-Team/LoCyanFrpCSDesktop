@@ -48,6 +48,7 @@ namespace LoCyanFrpDesktop.Utils
 
             InitDownloader();
             //this.Owner = this;
+            Tips.Text = Global.Tips[Random.Shared.Next(0, Global.Tips.Count - 1)];
             StartDownload();
             
         }

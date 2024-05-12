@@ -124,7 +124,9 @@
                         </Grid>
                     </Border>
                 </Grid>
-
+                <TextBlock Name="Tips" Text="你瞅啥" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="Gray" FontSize="9">
+                        
+                </TextBlock>
             </Grid>
         </Grid>
         

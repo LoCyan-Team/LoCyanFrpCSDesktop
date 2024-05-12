@@ -39,7 +39,7 @@ namespace LoCyanFrpDesktop
     public partial class MainWindow : UiWindow
     {
         public static bool DarkThemeEnabled;
-        private InfoResponseObjectt UserInfo;
+        private InfoResponseObject UserInfo;
         string username_auto;
         string token_auto;
         public static bool islogin = false;
@@ -55,8 +55,9 @@ namespace LoCyanFrpDesktop
             {
                 Login(Properties.Settings.Default.username, Properties.Settings.Default.password);
             }
+            Tips.Text = Global.Tips[Random.Shared.Next(0, Global.Tips.Count - 1)];
             CheckNetworkAvailability();
-            InitializeAutoLogin();
+            
             DataContext = this;
             Access.MainWindow = this;
             
@@ -64,9 +65,15 @@ namespace LoCyanFrpDesktop
 
         private async void CheckNetworkAvailability()
         {
+            bool b = true;
             var a = () =>
             {
-                MessageBox.Show("请检查您的网络连接!");
+                b = Logger.MsgBox("无法连接至LocyanFrp API，请检查您的网络连接!", "LocyanFrp", 1, 47, 0);
+                if (!b)
+                {
+                    Logger.MsgBox("你在想啥, 你只能确认!", "What r u doing?", 1, 47, 0);
+                }
+                //MessageBox.Show("请检查您的网络连接!");
                 Environment.Exit(0);
             };
             using (HttpClient httpClient = new HttpClient()) {
@@ -76,6 +83,10 @@ namespace LoCyanFrpDesktop
                     if (!httpResponseMessage.IsSuccessStatusCode)
                     {
                         a();
+                        
+                    }
+                    else { 
+                        InitializeAutoLogin();
                     }
                 }
                 catch (Exception ignored) {
@@ -136,9 +147,9 @@ namespace LoCyanFrpDesktop
                     HttpResponseMessage response = await HttpClient.GetAsync(url);
                     response.EnsureSuccessStatusCode();
                     string jsonString = await response.Content.ReadAsStringAsync();
-                    var InfoResponseObjectt = JsonConvert.DeserializeObject<InfoResponseObjectt>(jsonString);
-                    UserInfo = InfoResponseObjectt;
-                    if (InfoResponseObjectt.Status == 0)
+                    var InfoResponseObject = JsonConvert.DeserializeObject<InfoResponseObject>(jsonString);
+                    UserInfo = InfoResponseObject;
+                    if (InfoResponseObject.Status == 0)
                     {
                         return true;
                     }
@@ -338,7 +349,7 @@ namespace LoCyanFrpDesktop
         }
     }
 
-    public class InfoResponseObjectt
+    public class InfoResponseObject
     {
         [JsonProperty("status")]
         public int Status { get; set; }

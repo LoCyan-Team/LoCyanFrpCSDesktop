@@ -10,6 +10,7 @@ using System.IO;
 using LoCyanFrpDesktop.Utils;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace LoCyanFrpDesktop
 {
@@ -35,7 +36,7 @@ namespace LoCyanFrpDesktop
         {
             //bool openConsole = false;
             CrashInterception.Init();
-            base.OnStartup(e);
+            
             
             DispatcherUnhandledException += CurrentDomain_UnhandledException;
             DispatcherUnhandledException += (_, e) => CrashInterception.ShowException(e.Exception);
@@ -46,7 +47,15 @@ namespace LoCyanFrpDesktop
             //string Password;
             // 处理启动参数
             string[] args = e.Args;
+            InitialBanner initialBanner = new();
             
+            initialBanner.Show();
+            base.OnStartup(e);
+
+            Thread.Sleep(3000);
+            //MainWindow mainWindow = new();
+            initialBanner.Hide();
+
             if (args.Length > 0)
             {   
                 int i = 0;
@@ -96,6 +105,7 @@ namespace LoCyanFrpDesktop
                     }
                 }
             }
+            
         }
         private static void CurrentDomain_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
