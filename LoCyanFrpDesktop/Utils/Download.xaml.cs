@@ -151,6 +151,7 @@ namespace LoCyanFrpDesktop.Utils
                 {
                     Console.Error.WriteLine(e.Error);
                     CrashInterception.ShowException(e.Error);
+                    Logger.MsgBox("无法下载FRP, 请检查您的网络连接","LocyanFrp",0,48,1);
                     this.Owner = null;
                     Close();
                     return;

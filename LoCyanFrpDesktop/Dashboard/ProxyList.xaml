@@ -34,7 +34,16 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" HorizontalAlignment="Left">
-            <TextBlock VerticalAlignment="Center" Text="隧道列表" FontSize="22" Margin="10,0,10,0" />
+            <DockPanel VerticalAlignment="Stretch">
+                <Border CornerRadius="20" Height="40" Width="40" BorderThickness="1" BorderBrush="LightBlue" Margin="10,0,10,0" Name="Avatar">
+                    <Border.Background>
+                        <ImageBrush Stretch="UniformToFill" ImageSource="/Resource/favicon.ico"/>
+                    </Border.Background>
+                </Border>
+                <TextBlock VerticalAlignment="Center" Text="隧道列表" FontSize="25" Margin="0,0,10,0" />
+
+            </DockPanel>
+                
         </Grid>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -65,9 +74,18 @@
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <ui:Card Grid.Column="0" Padding="10" Margin="10,0,0,0" MouseDown="Card_MouseDown" >
+                <ui:Card Grid.Column="1" Padding="10" Margin="10,10,0,10" VerticalAlignment="Bottom">
+                    
+                    <StackPanel>
+                        <!--<TextBlock Name="Inbound" Margin="0,0,0,20" Text="上行流量:"/>
+                        <TextBlock Name="OutBound" Text="下行流量:"/>-->
+                        <TextBlock Name="Traffic" Text="剩余流量: "/>
+                    </StackPanel>
+                </ui:Card>
+                <ui:Card Grid.Column="0" Padding="10" Margin="10,0,0,0">
                     
                     <StackPanel>
                         <DockPanel>
@@ -80,8 +98,8 @@
                         <TextBlock Text="PS:右键隧道可以打开菜单哦喵~" />
                     </ui:Card.Footer>   
                 </ui:Card>
-
                 
+
             </Grid>
         </Grid>
         

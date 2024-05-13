@@ -41,6 +41,9 @@ using System.Windows.Shapes;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
 using Brush = System.Windows.Media.Brush;
+using System.Runtime.CompilerServices;
+using LoCyanFrpDesktop.Extensions;
+using Microsoft.Win32.SafeHandles;
 
 
 namespace LoCyanFrpDesktop.Dashboard
@@ -72,6 +75,64 @@ namespace LoCyanFrpDesktop.Dashboard
             Resources["BorderColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray;
             //BackgroundColor = Resources["ControlFillColorDefaultBrush"];
             BackgroundMenu = new();
+            //Inbound.Text += MainWindow.Inbound;
+            //OutBound.Text += MainWindow.Outbound;
+            Traffic.Text += (MainWindow.Traffic / 1024) + "GB";
+            RefreshAvatar();
+        }
+        private async void RefreshAvatar()
+        {
+            try
+            {
+                using (var client = new HttpClient()) {
+                    client.BaseAddress = new Uri(MainWindow.Avatar);
+                    var Avatar = await client.GetAsync(client.BaseAddress).Await().Content.ReadAsStreamAsync();
+                    var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Avatar.png");
+                    
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+
+                    using(FileStream fileStream = new(path, FileMode.Create))
+                    {
+                        byte[] bytes = new byte[Avatar.Length];
+                        Avatar.Read(bytes, 0, bytes.Length);
+                        // 设置当前流的位置为流的开始
+                        Avatar.Seek(0, SeekOrigin.Begin);
+
+                        // 把 byte[] 写入文件
+                        
+                        BinaryWriter bw = new BinaryWriter(fileStream);
+                        bw.Write(bytes);
+                        bw.Close();
+                        fileStream.Close();
+                    }
+                    BitmapImage bitmap = new BitmapImage();
+
+                    // 设置 BitmapImage 的 UriSource 属性为图片文件的路径
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
+                    bitmap.EndInit();
+                    var a = new ImageBrush(bitmap)
+                    {
+                        Stretch = Stretch.UniformToFill,
+
+                    };
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        this.Avatar.Background = a;
+                    });
+                    
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.MsgBox("无法获取您的头像, 请稍后重试", "LocyanFrp", 0, 48, 1);
+            }
         }
 
         private async void InitializeProxiesAsync()
