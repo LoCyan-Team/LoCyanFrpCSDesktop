@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: LoCyanFrpDesktop_dotnet6_publish_SingleFile
-          path: ${{ github.workspace }}\LoCyanFrpDesktop\bin\Debug\net6.0-windows\win-x64\publish
+          path: ${{ github.workspace }}\LoCyanFrpDesktop\bin\Release\net6.0-windows\win-x64\publish
           if-no-files-found: ignore
 
   
