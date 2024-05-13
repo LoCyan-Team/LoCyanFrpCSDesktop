@@ -54,8 +54,6 @@ namespace LoCyanFrpDesktop.Utils
 
             }
 
-
-
         }
         public bool CheckForUpdate(out string reason)
         {   bool a = false;
