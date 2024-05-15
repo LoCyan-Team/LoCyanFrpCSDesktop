@@ -71,6 +71,7 @@ namespace LoCyanFrpDesktop.Utils
                             icon == 48 ? SymbolRegular.Warning24 : SymbolRegular.Dismiss24
                             );
                         }
+                        
                 }
                 
                 

@@ -80,7 +80,7 @@
                 CornerRadius="8,0,0,0">
                 <Frame x:Name="RootFrame" Margin="4,8" />
             </Border>
-            
+
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -95,60 +95,6 @@
                     Timeout="5000" />
             </Grid>
         </Grid>
-
-        <!--<Grid Grid.Row="1">
-            
-        
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="55*"/>
-            <ColumnDefinition Width="923*"/>
-        </Grid.ColumnDefinitions>
-        <Grid Margin="10,10,10,0" Height="95" VerticalAlignment="Top" Grid.ColumnSpan="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="15*"/>
-                <RowDefinition Height="4*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="20*"/>
-                <ColumnDefinition Width="459*"/>
-            </Grid.ColumnDefinitions>
-            <Label Content="鉴定为" HorizontalAlignment="Left" Margin="34,0,0,0" FontSize="50" Width="172" Height="76" FontFamily="Microsoft YaHei" BorderBrush="#00000000" Grid.ColumnSpan="2"/>
-            <Label x:Name="title_username" Content="Administrator" HorizontalAlignment="Left" Margin="171,20,0,0" FontSize="25" Width="714" Height="55" FontFamily="Microsoft YaHei" BorderBrush="#00000000" Grid.Column="1" Grid.RowSpan="2" VerticalAlignment="Top"/>
-        </Grid>
-        </Grid>
-        <TabControl Margin="0,105,0,0" Grid.ColumnSpan="2">
-            <TabItem Header="隧道列表" HorizontalAlignment="Left" Margin="-2,-2,0,0" Width="72" FontFamily="Microsoft YaHei">
-                <Grid Background="White" Margin="0,0,-3,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="83*"/>
-                        <ColumnDefinition Width="47*"/>
-                        <ColumnDefinition Width="123*"/>
-                        <ColumnDefinition Width="728*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.ColumnSpan="4" Margin="0,0,3,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <ListBox x:Name="proxies_list" ItemsSource="{Binding Proxies}" Margin="5,5,40,5" Grid.Column="0" SelectionChanged="Proxies_List_SelectionChanged" d:ItemsSource="{d:SampleData ItemCount=5}" Background="White" BorderBrush="Black" FontFamily="Microsoft YaHei"/>
-                        <Button Content="启动隧道" FontSize="20" Click="Button_Click" Grid.Column="1" HorizontalAlignment="Left" Height="69" Margin="10,0,50,0" IsDefault="True" FontFamily="Microsoft YaHei"/>
-                    </Grid>
-                </Grid>
-            </TabItem>
-            <TabItem Header="隧道运行情况" HorizontalAlignment="Left" Width="120" Margin="-2,-2,0,0" FontFamily="Microsoft YaHei">
-
-            </TabItem>
-            <TabItem Header="关于" HorizontalAlignment="Left" Width="58" FontFamily="Microsoft YaHei">
-                <Grid Background="White">
-                    <Label Content="LoCyanFrp CS Application" Margin="0,26,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.618,-0.217" Width="522" FontSize="38" Height="63" FontFamily="Microsoft YaHei" BorderBrush="#00000000"/>
-                    <Label Content="版本 / Version: 1.1" Margin="305,124,0,0" VerticalAlignment="Top" Width="380" FontSize="15" FontFamily="Microsoft YaHei" BorderBrush="#00000000" Height="35" HorizontalAlignment="Left"/>
-                    <Label Content="开发者 / Developer: Daiyangcheng" Margin="305,164,0,0" VerticalAlignment="Top" Width="380" FontSize="15" FontFamily="Microsoft YaHei" BorderBrush="#00000000" Height="35" HorizontalAlignment="Left"/>
-                    <Label Content="Copyright © 2021 - 2023 杭州樱芸网络科技有限公司 All rights reserved." Margin="228,204,0,0" VerticalAlignment="Top" Width="534" FontSize="15" FontFamily="Microsoft YaHei" BorderBrush="#00000000" Height="35" HorizontalAlignment="Left"/>
-                    <Label Content="UI库：HandyControl" Margin="216,279,0,0" VerticalAlignment="Top" Width="534" FontSize="15" FontFamily="Microsoft YaHei" BorderBrush="#00000000" Height="35" HorizontalAlignment="Left"/>
-                    <Label Content="LoCyanFrp - https://www.locyanfrp.cn" Margin="216,319,0,0" VerticalAlignment="Top" Width="534" FontSize="15" FontFamily="Microsoft YaHei" BorderBrush="#00000000" Height="35" HorizontalAlignment="Left"/>
-                </Grid>
-            </TabItem>
-        </TabControl>-->
 
     </Grid>
 </ui:UiWindow>

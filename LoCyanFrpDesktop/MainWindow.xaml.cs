@@ -30,6 +30,7 @@ using System.Windows.Media.Effects;
 using LoCyanFrpDesktop.Utils;
 using HandyControl.Tools.Extension;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using HandyControl.Controls;
 
 namespace LoCyanFrpDesktop
 {
@@ -39,12 +40,16 @@ namespace LoCyanFrpDesktop
     public partial class MainWindow : UiWindow
     {
         public static bool DarkThemeEnabled;
-        private InfoResponseObjectt UserInfo;
+        private InfoResponseObject UserInfo;
         string username_auto;
         string token_auto;
         public static bool islogin = false;
         public static DashBoard DashBoard;
         //public static Snackbar Snackbar = new Snackbar();
+        public static string Avatar;
+        public static int Inbound;
+        public static int Outbound;
+        public static long Traffic;
         public MainWindow()
         {
             
@@ -55,27 +60,40 @@ namespace LoCyanFrpDesktop
             {
                 Login(Properties.Settings.Default.username, Properties.Settings.Default.password);
             }
+            Tips.Text = Global.Tips[Random.Shared.Next(0, Global.Tips.Count - 1)];
             CheckNetworkAvailability();
-            InitializeAutoLogin();
+            
             DataContext = this;
             Access.MainWindow = this;
+            
             
         }
 
         private async void CheckNetworkAvailability()
         {
+            bool b = true;
             var a = () =>
             {
-                MessageBox.Show("请检查您的网络连接!");
+                b = Logger.MsgBox("无法连接至LocyanFrp API，请检查您的网络连接!", "LocyanFrp", 1, 47, 0);
+                if (!b)
+                {
+                    Logger.MsgBox("你在想啥, 你只能确认!", "What r u doing?", 1, 47, 0);
+                }
+                //MessageBox.Show("请检查您的网络连接!");
                 Environment.Exit(0);
             };
             using (HttpClient httpClient = new HttpClient()) {
                 try
                 {
                     HttpResponseMessage httpResponseMessage = await httpClient.GetAsync("https://api.locyanfrp.cn");
+                    var c = httpResponseMessage.StatusCode;
                     if (!httpResponseMessage.IsSuccessStatusCode)
                     {
                         a();
+                        
+                    }
+                    else { 
+                        InitializeAutoLogin();
                     }
                 }
                 catch (Exception ignored) {
@@ -102,6 +120,10 @@ namespace LoCyanFrpDesktop
                 Properties.Settings.Default.LoginToken = token_auto;
                 Properties.Settings.Default.username = username_auto;
                 Properties.Settings.Default.FrpToken = UserInfo.Token;
+                Avatar = UserInfo.Avatar;
+                Inbound = UserInfo.Inbound;
+                Outbound = UserInfo.Outbound;
+                Traffic = UserInfo.Traffic;
                 DashBoard = new DashBoard();
                 DashBoard.Show();
                 Close();
@@ -136,9 +158,10 @@ namespace LoCyanFrpDesktop
                     HttpResponseMessage response = await HttpClient.GetAsync(url);
                     response.EnsureSuccessStatusCode();
                     string jsonString = await response.Content.ReadAsStringAsync();
-                    var InfoResponseObjectt = JsonConvert.DeserializeObject<InfoResponseObjectt>(jsonString);
-                    UserInfo = InfoResponseObjectt;
-                    if (InfoResponseObjectt.Status == 0)
+                    var InfoResponseObject = JsonConvert.DeserializeObject<InfoResponseObject>(jsonString);
+                    UserInfo = InfoResponseObject;
+                    
+                    if (InfoResponseObject.Status == 0)
                     {
                         return true;
                     }
@@ -194,6 +217,10 @@ namespace LoCyanFrpDesktop
                         else
                         {
                             Logger.MsgBox($"登录成功\n获取到登录Token: {responseObject.Token}", "提示", 0, 47, 0);
+                            Avatar = responseObject.UserData.Avatar;
+                            Inbound = responseObject.UserData.Inbound;
+                            Outbound = responseObject.UserData.Outbound;
+                            Traffic = responseObject.UserData.Traffic;
                             Properties.Settings.Default.LoginToken = responseObject.Token;
                             Properties.Settings.Default.username = responseObject.UserData.Username;
                             Properties.Settings.Default.FrpToken = responseObject.UserData.FrpToken;
@@ -204,6 +231,8 @@ namespace LoCyanFrpDesktop
                             DashBoard = new DashBoard();
                             DashBoard.Show();
                             Close();
+                            Access.DashBoard.CheckIfFrpcInstalled();
+
                         }
                     }
                     catch (HttpRequestException ex)
@@ -336,7 +365,7 @@ namespace LoCyanFrpDesktop
         }
     }
 
-    public class InfoResponseObjectt
+    public class InfoResponseObject
     {
         [JsonProperty("status")]
         public int Status { get; set; }
@@ -376,13 +405,13 @@ namespace LoCyanFrpDesktop
 
     public class UserData
     {
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string FrpToken { get; set; }
+        public string? Username { get; set; }
+        public string? Email { get; set; }
+        public string? FrpToken { get; set; }
         public long Traffic { get; set; }
         public int Inbound { get; set; }
         public int Outbound { get; set; }
-        public string Avatar { get; set; }
+        public string? Avatar { get; set; }
     }
 
 }

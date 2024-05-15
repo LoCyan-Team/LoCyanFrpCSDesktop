@@ -48,6 +48,7 @@ namespace LoCyanFrpDesktop.Utils
 
             InitDownloader();
             //this.Owner = this;
+            Tips.Text = Global.Tips[Random.Shared.Next(0, Global.Tips.Count - 1)];
             StartDownload();
             
         }
@@ -150,6 +151,7 @@ namespace LoCyanFrpDesktop.Utils
                 {
                     Console.Error.WriteLine(e.Error);
                     CrashInterception.ShowException(e.Error);
+                    Logger.MsgBox("无法下载FRP, 请检查您的网络连接","LocyanFrp",0,48,1);
                     this.Owner = null;
                     Close();
                     return;

@@ -53,7 +53,7 @@
                 <TextBlock Name="DownloadSpeed" Margin="1,10" Text="下载速度"/>
             </Grid>
             <Grid Grid.Row="3">
-                <TextBlock VerticalAlignment="Bottom" HorizontalAlignment="Center" Foreground="Gray" FontSize="9" Text="Tips:他们说下载的时候把电脑抱起来摇匀, 下载速度会更快哦"/>
+                <TextBlock Name="Tips" VerticalAlignment="Bottom" HorizontalAlignment="Center" Foreground="Gray" FontSize="9" Text=""/>
             </Grid>
         </Grid>
     </Grid>

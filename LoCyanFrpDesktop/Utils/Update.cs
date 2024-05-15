@@ -24,16 +24,14 @@ namespace LoCyanFrpDesktop.Utils
         /// <summary>
         /// 检查更新计时器
         /// </summary>
-        private static readonly Timer _checkTimer = new(200000) { AutoReset = true };
+        //private static readonly Timer _checkTimer = new(200000) { AutoReset = true };
 
         /// <summary>
         /// 更新初始化
         /// </summary>
         public static void Init()
         {
-            Task.Run(CheckVersion);
-            _checkTimer.Elapsed += (_, _) => CheckVersion();
-            _checkTimer.Start();
+            
             AppDomain.CurrentDomain.ProcessExit += (_, _) => StartUpdater();
 
         }
@@ -68,10 +66,13 @@ namespace LoCyanFrpDesktop.Utils
         /// <summary>
         /// 检查更新
         /// </summary>
-        public static void CheckVersion()
+        public static void CheckVersion(out bool isProgramHasNewerVersion,out string InterruptReason)
         {
+            InterruptReason = "";
+            isProgramHasNewerVersion = false;
             if (!Global.Branch.Equals("Release"))
             {
+                InterruptReason = "You Are On Preview Branch!!!";
                 return;
             }
             try
@@ -79,6 +80,7 @@ namespace LoCyanFrpDesktop.Utils
                 JObject? jsonObject = JsonConvert.DeserializeObject<JObject>(Net.Get("https://api.github.com/repos/LoCyan-Team/LoCyanFrpCSDesktop/releases/latest", "application/vnd.github.v3+json", "Hakuu").Await().Content.ReadAsStringAsync().Await());
                 if (jsonObject is null)
                 {
+                    InterruptReason = "无法检测更新, 请检查网络连接";
                     return;
                 }
 
@@ -88,7 +90,8 @@ namespace LoCyanFrpDesktop.Utils
                     LastVersion = version;
                     CurrentVersion = "v" + Global.Version.ToString();
                     if (version != CurrentVersion)
-                    {
+                    {       
+                            isProgramHasNewerVersion = true;
                             DownloadNewVersion(jsonObject);
                         
                     }
@@ -96,8 +99,11 @@ namespace LoCyanFrpDesktop.Utils
             }
             catch (Exception e)
             {
+                InterruptReason = "请带着崩溃日志和截图去见开发者";
+                CrashInterception.ShowException(e);
                 Logger.Output(LogType.Error, e.Message);
                 Logger.Output(LogType.Debug, e);
+
             }
         }
 
