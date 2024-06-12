@@ -70,7 +70,7 @@ namespace LoCyanFrpDesktop.Utils
         {
             InterruptReason = "";
             isProgramHasNewerVersion = false;
-            if (!Global.Branch.Equals("Release"))
+            if (!Global.Branch.Equals("Release") || !Global.Branch.Equals("RC"))
             {
                 InterruptReason = "You Are On Preview Branch!!!";
                 return;
@@ -88,7 +88,7 @@ namespace LoCyanFrpDesktop.Utils
                 if (LastVersion != version && !string.IsNullOrEmpty(version))
                 {
                     LastVersion = version;
-                    CurrentVersion = "v" + Global.Version.ToString();
+                    CurrentVersion = "v" + Global.Version + "-" + Global.Branch + Global.Revision;
                     if (version != CurrentVersion)
                     {       
                             isProgramHasNewerVersion = true;

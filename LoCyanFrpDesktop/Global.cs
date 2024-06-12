@@ -13,7 +13,7 @@ namespace LoCyanFrpDesktop
         public static readonly bool DebugMode = Properties.Settings.Default.DebugMode;
         public static bool LoginedByConsole = false;
         public const string Version = "2.1.0";
-        public const string Branch = "Beta";
+        public const string Branch = "RC";
         public const int Revision = 1;
         public static readonly BuildInfo BuildInfo = new();
         public const string Developer = "Shiroiame-Kusu & Daiyangcheng";
