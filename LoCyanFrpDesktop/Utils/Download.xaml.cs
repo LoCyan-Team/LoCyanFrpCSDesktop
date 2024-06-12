@@ -78,7 +78,10 @@ namespace LoCyanFrpDesktop.Utils
                 RequestConfiguration = {
                     Accept = "*/*",
                     //CookieContainer = cookies,
-                    Headers = new WebHeaderCollection(), // { your custom headers }
+                    Headers = new WebHeaderCollection()
+                    {
+
+                    }, // { your custom headers }
                     KeepAlive = true, // default value is false
                     ProtocolVersion = HttpVersion.Version11, // default value is HTTP 1.1
                     UseDefaultCredentials = false,
@@ -262,10 +265,13 @@ namespace LoCyanFrpDesktop.Utils
         }
         private async void StartDownload()
         {
-            await RequestAPIandParse("https://api-gh.1l1.icu/repos/LoCyan-Team/LoCyanFrpPureApp/releases/latest");
-
+            var a = await RequestAPIandParse("https://api-gh.1l1.icu/repos/LoCyan-Team/LoCyanFrpPureApp/releases/latest");
+            if (!a)
+            {
+                await RequestAPIandParse("https://api.github.com/repos/LoCyan-Team/LoCyanFrpPureApp/releases/latest");
+            }
         }
-        private static async Task RequestAPIandParse(string url)
+        private static async Task<bool> RequestAPIandParse(string url)
         {
             try
             {
@@ -293,20 +299,21 @@ namespace LoCyanFrpDesktop.Utils
                     }
                     FolderName = $"frp_LoCyanFrp-{Version}_windows_amd64";
                     Console.WriteLine(TheFuckingLink);
+                    
                     await DownloadFile(TheFuckingLink, DownloadPath);
-
+                    return true;
                 }
                 else
                 {
 
                     Logger.MsgBox("唔......好像您的网络出了点问题唉，要去检查一下哦", "出现了点小问题", 2, 47, 1);
-                    return;
+                    return false;
                 }
             }
             catch(Exception ex)
             {
                 CrashInterception.ShowException(ex);
-                return;
+                return false;
             }
             
         }
