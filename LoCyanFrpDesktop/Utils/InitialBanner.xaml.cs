@@ -56,7 +56,9 @@ namespace LoCyanFrpDesktop.Utils
 
         }
         public bool CheckForUpdate(out string reason)
-        {   bool a = false;
+        {
+            Console.WriteLine("Checking Update...");
+            bool a = false;
             string Reason;
             Update.CheckVersion(out a,out Reason);
             reason = Reason;

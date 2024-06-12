@@ -52,7 +52,10 @@ namespace LoCyanFrpDesktop
         public static long Traffic;
         public MainWindow()
         {
-            
+            //InitialBanner initialBanner = new();
+
+            //initialBanner.Show();
+            //initialBanner.Hide();
             InitializeComponent();
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = new BitmapImage(iconUri);

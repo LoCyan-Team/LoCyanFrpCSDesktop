@@ -47,14 +47,12 @@ namespace LoCyanFrpDesktop
             //string Password;
             // 处理启动参数
             string[] args = e.Args;
-            InitialBanner initialBanner = new();
             
-            initialBanner.Show();
             base.OnStartup(e);
 
             Thread.Sleep(3000);
             //MainWindow mainWindow = new();
-            initialBanner.Hide();
+            
 
             if (args.Length > 0)
             {   

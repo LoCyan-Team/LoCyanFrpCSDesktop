@@ -70,14 +70,17 @@ namespace LoCyanFrpDesktop.Utils
         {
             InterruptReason = "";
             isProgramHasNewerVersion = false;
-            if (!Global.Branch.Equals("Release") || !Global.Branch.Equals("RC"))
+            if (!Global.Branch.Equals("Release") && !Global.Branch.Equals("RC"))
             {
                 InterruptReason = "You Are On Preview Branch!!!";
                 return;
             }
+            
+            
             try
-            {
-                JObject? jsonObject = JsonConvert.DeserializeObject<JObject>(Net.Get("https://api.github.com/repos/LoCyan-Team/LoCyanFrpCSDesktop/releases/latest", "application/vnd.github.v3+json", "Hakuu").Await().Content.ReadAsStringAsync().Await());
+            {   
+
+                JObject? jsonObject = JsonConvert.DeserializeObject<JObject>(Net.Get("https://api.github.com/repos/LoCyan-Team/LoCyanFrpCSDesktop/releases/latest", "application/vnd.github.v3+json", "LoCyanFrpCSDesktop").Await().Content.ReadAsStringAsync().Await());
                 if (jsonObject is null)
                 {
                     InterruptReason = "无法检测更新, 请检查网络连接";
@@ -92,7 +95,11 @@ namespace LoCyanFrpDesktop.Utils
                     if (version != CurrentVersion)
                     {       
                             isProgramHasNewerVersion = true;
-                            DownloadNewVersion(jsonObject);
+                            
+                                Console.WriteLine("Downloading...");
+                                DownloadNewVersion(jsonObject);
+                           
+                            
                         
                     }
                 }
@@ -104,8 +111,9 @@ namespace LoCyanFrpDesktop.Utils
                 Logger.Output(LogType.Error, e.Message);
                 Logger.Output(LogType.Debug, e);
 
+                }
             }
-        }
+        
 
         /// <summary>
         /// 下载新版本
@@ -240,9 +248,12 @@ namespace LoCyanFrpDesktop.Utils
             _httpClient.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("UTF-8"));
             _httpClient.DefaultRequestHeaders.Remove("user-agent");
             _httpClient.DefaultRequestHeaders.Add("user-agent", userAgent);
+            _httpClient.Timeout = TimeSpan.FromSeconds(5);
             HttpResponseMessage response = await _httpClient.GetAsync(url);
             Logger.Output(LogType.DetailDebug, "Response Headers\n", response.Headers.ToString());
-            Logger.Output(LogType.DetailDebug, "Content\n", await response.Content.ReadAsStringAsync());
+            var content = await response.Content.ReadAsStringAsync();
+            Logger.Output(LogType.DetailDebug, "Content\n", content);
+            Console.WriteLine(content);
             return response;
         }
     }

@@ -39,7 +39,13 @@ namespace LoCyanFrpDesktop.Utils
             {
                 line = line.TrimEnd(' ');
             }
-            Access.Status.Dispatcher.Invoke(() => Access.Status.Append(LogPreProcess.Color(type, line)));
+            if (type == LogType.Debug || type == LogType.DetailDebug)
+            {
+                Console.WriteLine(line);
+                return;
+            }
+            
+                Access.Status.Dispatcher.Invoke(() => Access.Status.Append(LogPreProcess.Color(type, line)));
             LogPreProcess.Process.Cache.Add(new(type, line));
             if (LogPreProcess.Process.Cache.Count > 200)
             {
