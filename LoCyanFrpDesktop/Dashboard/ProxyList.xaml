@@ -58,12 +58,17 @@
                 Padding="10,5"
                 CornerRadius="8"
                 >
-                    <StackPanel >
-                        <DockPanel Name="ListPanel">
-                            
-                        </DockPanel>
-                    </StackPanel>
-                <!--
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel >
+                        
+                            <WrapPanel Name="ListPanel">
+
+                            </WrapPanel>
+                        
+                        
+                        </StackPanel>
+                    </ScrollViewer>
+                    <!--
                 <ListView SelectionChanged="Proxies_List_SelectionChanged" Name="proxies_list"  HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10" ContextMenuOpening="ListView_ContextMenuOpening" MouseDown="ListView_MouseDown" MouseDoubleClick="proxies_list_MouseDoubleClick">
                     <ListView.ContextMenu>
                         

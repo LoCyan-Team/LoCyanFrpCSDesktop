@@ -52,24 +52,22 @@ namespace LoCyanFrpDesktop.Utils
             StartDownload();
             
         }
-
         public void InitDownloader()
         {
             var DownloadOption = new DownloadConfiguration()
             {
                 BufferBlockSize = 10240,
                 // file parts to download, the default value is 1
-                ChunkCount = 8,
+                ChunkCount = 16,
                 // download speed limited to 2MB/s, default values is zero or unlimited
-                MaximumBytesPerSecond = 1024 * 1024 * 2,
                 // the maximum number of times to fail
-                MaxTryAgainOnFailover = 5,
+                MaxTryAgainOnFailover = 3,
                 // release memory buffer after each 50 MB
                 MaximumMemoryBufferBytes = 1024 * 1024 * 50,
                 // download parts of the file as parallel or not. The default value is false
                 ParallelDownload = true,
                 // number of parallel downloads. The default value is the same as the chunk count
-                ParallelCount = 4,
+                ParallelCount = 16,
                 // timeout (millisecond) per stream block reader, default values is 1000
                 Timeout = 3000,
                 // clear package chunks data when download completed with failure, default value is false
@@ -265,17 +263,18 @@ namespace LoCyanFrpDesktop.Utils
         }
         private async void StartDownload()
         {
-            var a = await RequestAPIandParse("https://api-gh.1l1.icu/repos/LoCyan-Team/LoCyanFrpPureApp/releases/latest");
+            var a = await RequestAPIandParse("https://api-gh.1l1.icu/repos/LoCyan-Team/LoCyanFrpPureApp/releases/latest",true);
             if (!a)
             {
-                await RequestAPIandParse("https://api.github.com/repos/LoCyan-Team/LoCyanFrpPureApp/releases/latest");
+                await RequestAPIandParse("https://api.github.com/repos/LoCyan-Team/LoCyanFrpPureApp/releases/latest", false);
             }
         }
-        private static async Task<bool> RequestAPIandParse(string url)
+        private static async Task<bool> RequestAPIandParse(string url,bool mirror)
         {
             try
             {
                 var HttpClient = new HttpClient();
+                HttpClient.Timeout = TimeSpan.FromSeconds(5);
                 HttpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188");
                 var Response = await HttpClient.GetAsync(url);
                 if (Response.IsSuccessStatusCode)
@@ -289,14 +288,10 @@ namespace LoCyanFrpDesktop.Utils
                     Match match = Regex.Match(DownloadVersion, pattern);
                     var Version = match.Groups[1].Value;
                     string architecture = RuntimeInformation.OSArchitecture.ToString();
-                    if (architecture == "X86")
-                    {
-                        TheFuckingLink = $"https://proxy-gh.1l1.icu/https://github.com/LoCyan-Team/LoCyanFrpPureApp/releases/download/{DownloadVersion}/frp_LoCyanFrp-{Version}_windows_386.zip";
-                    }
-                    else
-                    {
-                        TheFuckingLink = $"https://proxy-gh.1l1.icu/https://github.com/LoCyan-Team/LoCyanFrpPureApp/releases/download/{DownloadVersion}/frp_LoCyanFrp-{Version}_windows_amd64.zip";
-                    }
+                    var MirrorAddress = (mirror ? "https://proxy-gh.1l1.icu/" : "");
+                    var _architecture = (architecture == "X86" ? "386" : "amd64");
+                    TheFuckingLink = $"{MirrorAddress}https://github.com/LoCyan-Team/LoCyanFrpPureApp/releases/download/{DownloadVersion}/frp_LoCyanFrp-{Version}_windows_{_architecture}.zip";
+                   
                     FolderName = $"frp_LoCyanFrp-{Version}_windows_amd64";
                     Console.WriteLine(TheFuckingLink);
                     

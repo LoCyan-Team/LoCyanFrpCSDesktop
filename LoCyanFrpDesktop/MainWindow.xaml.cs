@@ -57,6 +57,11 @@ namespace LoCyanFrpDesktop
             //initialBanner.Show();
             //initialBanner.Hide();
             InitializeComponent();
+            if(Random.Shared.Next(0, 100) == Random.Shared.Next(0, 100))
+            {   
+                throw new Exception("这是一个彩蛋，万分之一的机会");
+            }
+            
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = new BitmapImage(iconUri);
             if(Global.LoginedByConsole && Properties.Settings.Default.username != null && Properties.Settings.Default.password != null)
@@ -68,10 +73,10 @@ namespace LoCyanFrpDesktop
             
             DataContext = this;
             Access.MainWindow = this;
-            
-            
-        }
+            Update.Init();
 
+
+        }
         private async void CheckNetworkAvailability()
         {
             bool b = true;
@@ -103,7 +108,7 @@ namespace LoCyanFrpDesktop
                     a();
                 }
                 
-            }   
+            }
         }
 
         public void OpenSnackbar(string title, string message, SymbolRegular icon)

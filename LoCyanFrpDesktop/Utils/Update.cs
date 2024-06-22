@@ -31,7 +31,7 @@ namespace LoCyanFrpDesktop.Utils
         /// </summary>
         public static void Init()
         {
-            
+            Task.Run(CheckVersion);
             AppDomain.CurrentDomain.ProcessExit += (_, _) => StartUpdater();
 
         }
@@ -66,10 +66,10 @@ namespace LoCyanFrpDesktop.Utils
         /// <summary>
         /// 检查更新
         /// </summary>
-        public static void CheckVersion(out bool isProgramHasNewerVersion,out string InterruptReason)
+        public static void CheckVersion()
         {
-            InterruptReason = "";
-            isProgramHasNewerVersion = false;
+            var InterruptReason = "";
+            var isProgramHasNewerVersion = false;
             if (!Global.Branch.Equals("Release") && !Global.Branch.Equals("RC"))
             {
                 InterruptReason = "You Are On Preview Branch!!!";
@@ -137,7 +137,7 @@ namespace LoCyanFrpDesktop.Utils
                 string? url = asset["browser_download_url"]?.ToString();
 
                 if (string.IsNullOrEmpty(filename) ||
-                    !IdentifyFile(filename?.ToLowerInvariant()) ||
+                    //!IdentifyFile(filename?.ToLowerInvariant()) ||
                     string.IsNullOrEmpty(url))
                 {
                     continue;
@@ -188,7 +188,7 @@ namespace LoCyanFrpDesktop.Utils
         /// <summary>
         /// 识别文件
         /// </summary>
-        private static bool IdentifyFile(string? name)
+        /*private static bool IdentifyFile(string? name)
         {
             if (name?.Contains("wpf") ?? false)
             {
@@ -199,7 +199,7 @@ namespace LoCyanFrpDesktop.Utils
                     !(netVer == "6" ^ name.Contains("dotnet6"));
             }
             return false;
-        }
+        }*/
 
         /// <summary>
         /// 启动 Updater.exe
@@ -219,7 +219,7 @@ namespace LoCyanFrpDesktop.Utils
             Process.Start(new ProcessStartInfo("Updater.exe")
             {
                 WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory,
-                UseShellExecute = false,
+                UseShellExecute = true,
             });
         }
     }
@@ -247,13 +247,11 @@ namespace LoCyanFrpDesktop.Utils
             _httpClient.DefaultRequestHeaders.AcceptCharset.Clear();
             _httpClient.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("UTF-8"));
             _httpClient.DefaultRequestHeaders.Remove("user-agent");
-            _httpClient.DefaultRequestHeaders.Add("user-agent", userAgent);
-            _httpClient.Timeout = TimeSpan.FromSeconds(5);
+            _httpClient.DefaultRequestHeaders.Add("user-agent", userAgent);;
             HttpResponseMessage response = await _httpClient.GetAsync(url);
             Logger.Output(LogType.DetailDebug, "Response Headers\n", response.Headers.ToString());
             var content = await response.Content.ReadAsStringAsync();
-            Logger.Output(LogType.DetailDebug, "Content\n", content);
-            Console.WriteLine(content);
+            //Logger.Output(LogType.DetailDebug, "Content\n", content);
             return response;
         }
     }

@@ -199,9 +199,7 @@ namespace LoCyanFrpDesktop.Dashboard
                 Console.WriteLine(i);
                 Dispatcher.Invoke(() =>
                 {
-                    var a = new ProxyCard(responseObject.Proxies[i],i);
-
-                    ListPanel.Children.Add(a);
+                    ListPanel.Children.Add(new ProxyCard(responseObject.Proxies[i], i));
                     /*ListPanel.Children.Add(new Card()
                     {
                         //Background = new SolidColorBrush(Colors.White),
@@ -420,7 +418,8 @@ namespace LoCyanFrpDesktop.Dashboard
                 Cards.Add(this);
                 //DefaultStyleKeyProperty.OverrideMetadata(typeof(ProxyCard), new FrameworkPropertyMetadata(typeof(ProxyCard)));
                 //this.Style.BasedOn = (Style)Application.Current.Resources["Card"];
-                this.Name = ProxyInfo.ProxyName;
+                string Name = ProxyInfo.ProxyName;
+                //this.Name = Name;
                 //this.OverridesDefaultStyle = true;
                 //this.Style = ProxyList.card.Style;
                 //Theme.Apply(ThemeType.Light);
@@ -434,7 +433,7 @@ namespace LoCyanFrpDesktop.Dashboard
                 this.HorizontalAlignment = HorizontalAlignment.Left;
                 this.VerticalAlignment = VerticalAlignment.Stretch;
                 this.MinHeight = 50;
-                this.MinWidth = 100;
+                this.Width = 200;
                 this.BorderBrush = new SolidColorBrush();
                 StackPanel stackPanel = new StackPanel()
                 {
@@ -710,20 +709,16 @@ namespace LoCyanFrpDesktop.Dashboard
         public string RemotePort { get; set; }
 
         [JsonProperty("use_compression")]
-        public bool UseCompression { get; set; }
+        public int UseCompression { get; set; }
 
         [JsonProperty("use_encryption")]
-        public bool UseEncryption { get; set; }
+        public int UseEncryption { get; set; }
         [JsonProperty("domain")]
         public string Domain { get; set; }
         public int Node { get; set; }
 
         [JsonProperty("icp")]
         public object Icp { get; set; } // icp 字段可能为 null，使用 object 类型表示
-        public override string ToString()
-        {
-            return $"{this.ProxyName} {ProxyType} {LocalIp}:{LocalPort}-->{Domain}:{RemotePort}";
-        }
     }
 
     

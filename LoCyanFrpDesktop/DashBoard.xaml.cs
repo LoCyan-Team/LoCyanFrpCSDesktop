@@ -25,6 +25,7 @@ using MessageBox = Wpf.Ui.Controls.MessageBox;
 using LoCyanFrpDesktop.Utils;
 using Wpf.Ui.Common;
 using Microsoft.VisualBasic;
+using System.Threading;
 
 namespace LoCyanFrpDesktop
 {
@@ -47,26 +48,11 @@ namespace LoCyanFrpDesktop
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = new BitmapImage(iconUri);
             Access.DashBoard = this;
-            Task.Run(() => {
-                string Status;
-                if (CheckForUpdate(out Status))
-                {
-                    //Output.Text = "检测到更新，如果没有自动更新记得自己去更新哦~";
-                    Update.Init();
-                }
-
-            });
+            
+            
             
         }
-        public bool CheckForUpdate(out string reason)
-        {
-            Console.WriteLine("Checking Update...");
-            bool a = false;
-            string Reason;
-            Update.CheckVersion(out a, out Reason);
-            reason = Reason;
-            return a;
-        }
+        
         public bool CheckIfFrpcInstalled()
         {
             if (!File.Exists(FrpcPathConfig))

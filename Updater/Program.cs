@@ -29,7 +29,7 @@ Replace();
 stopWatch.Stop();
 Console.WriteLine($"\r\n替换更新完毕，用时{stopWatch.ElapsedMilliseconds}ms");
 Console.ForegroundColor = @default;
-
+Console.ReadKey();
 
 void Replace()
 {
