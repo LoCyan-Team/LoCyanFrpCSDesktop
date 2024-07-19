@@ -173,7 +173,7 @@ namespace LoCyanFrpDesktop.Utils
                     Logger.Output(LogType.Debug, "解压成功");
                     Console.WriteLine("解压成功");
                     IsReadyToUpdate = true;
-                    Logger.Output(LogType.Info, "新版本已下载完毕\n" + (Environment.OSVersion.Platform == PlatformID.Win32NT ? "重启即可自动更新" : "你可以自行打开“update”文件夹复制替换"));
+                    Logger.Output(LogType.Debug, "新版本已下载完毕\n" + (Environment.OSVersion.Platform == PlatformID.Win32NT ? "重启即可自动更新" : "你可以自行打开“update”文件夹复制替换"));
                     Console.WriteLine("新版本已下载完毕\n" + (Environment.OSVersion.Platform == PlatformID.Win32NT ? "重启即可自动更新" : "你可以自行打开“update”文件夹复制替换"));
                 }
                 catch (Exception e)

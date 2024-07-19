@@ -315,6 +315,7 @@ namespace LoCyanFrpDesktop.Dashboard
             _FrpcProcess.OutputDataReceived += SortOutputHandler;
             _FrpcProcess.EnableRaisingEvents = true;
             _FrpcProcess.Exited += new EventHandler((sender, e) => _FrpcProcess_Exited(sender, e, SelectionIndex));
+            
             // 读取标准输出和标准错误输出
             //string output = process.StandardOutput.ReadToEnd(); 
             //string error = process.StandardError.ReadToEnd();

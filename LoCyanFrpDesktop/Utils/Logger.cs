@@ -39,7 +39,11 @@ namespace LoCyanFrpDesktop.Utils
             {
                 line = line.TrimEnd(' ');
             }
-            if (type == LogType.Info || type == LogType.Debug || type == LogType.DetailDebug)
+            if(type == LogType.Info)
+            {
+                Console.WriteLine(line);
+            }
+            if (type == LogType.Debug || type == LogType.DetailDebug)
             {
                 Console.WriteLine(line);
                 return;

@@ -25,6 +25,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms.Design;
 using System.Linq.Expressions;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace LoCyanFrpDesktop.Utils
 {
@@ -45,6 +47,7 @@ namespace LoCyanFrpDesktop.Utils
         {
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            Access.Download = this;
 
             InitDownloader();
             //this.Owner = this;
@@ -254,8 +257,30 @@ namespace LoCyanFrpDesktop.Utils
             {
                 await DownloadService.DownloadFileTaskAsync(url, Path.Combine(path + "frpc.temp"));
             }catch(Exception ex)
-            {
-                CrashInterception.ShowException(ex);
+            {   
+                Debug.WriteLine(ex);
+                if(Logger.MsgBox("唔......好像您的网络出了点问题唉，要去检查一下哦", "出现了点小问题", 2, 47, 1))
+                {
+                    try
+                    {
+                        Access.Download.Close();
+                    }catch(Exception e)
+                    {
+
+                    }
+
+                }
+                else
+                {
+                    try
+                    {
+                        Access.Download.Close();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
             }
             
 
@@ -306,8 +331,9 @@ namespace LoCyanFrpDesktop.Utils
                 }
             }
             catch(Exception ex)
-            {
-                CrashInterception.ShowException(ex);
+            {   
+                Debug.WriteLine(ex);
+                //CrashInterception.ShowException(ex);
                 return false;
             }
             
