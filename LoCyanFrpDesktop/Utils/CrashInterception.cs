@@ -77,7 +77,7 @@ namespace LoCyanFrpDesktop.Utils
                     $"◦ 崩溃日志已保存在 {Path.Combine("logs", "crash", $"{DateTime.Now:yyyy-MM-dd}.log")}\n" +
                     $"◦ 反馈此问题可以帮助作者更好的改进LocyanFrp",
                 MainIcon = Ookii.Dialogs.Wpf.TaskDialogIcon.Error,
-                Footer = $"你可以<a href=\"https://github.com/LoCyan-Team/LoCyanFrpCSDesktop/崩溃反馈+{e.GetType()}\">提交Issue</a>",
+                Footer = $"你可以<a href=\"https://github.com/LoCyan-Team/LoCyanFrpCSDesktop/issues/new?assignees=&labels=%E2%9D%97+%E5%B4%A9%E6%BA%83&projects=&template=crash_report.yml&title=崩溃反馈+{e.GetType()}\">提交Issue</a>",
                 FooterIcon = Ookii.Dialogs.Wpf.TaskDialogIcon.Information,
                 EnableHyperlinks = true,
                 ExpandedInformation = exceptionMsg
