@@ -19,7 +19,8 @@
         ExtendsContentIntoTitleBar="True"
         StateChanged="UiWindow_StateChanged"
         Style="{StaticResource UiWindow}"
-        WindowStyle="None">
+        WindowStyle="None"
+        KeyDown="UiWindow_KeyDown">
     <Grid>
         <Grid.Resources>
             <Color x:Key="ShadowColor"></Color>
