@@ -52,6 +52,10 @@ namespace LoCyanFrpDesktop.Dashboard
 
         private void SignOut_Click(object sender, RoutedEventArgs e)
         {
+            if (!Logger.MsgBox("您确定要退出登录吗?", "退出登录", 1, 47, 1))
+            {
+                return;
+            }
             Access.DashBoard.Close();
             if (File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session.token"))) {
                 File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session.token"));
