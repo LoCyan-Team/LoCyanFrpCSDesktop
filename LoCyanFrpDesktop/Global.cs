@@ -1,7 +1,9 @@
 ﻿using LoCyanFrpDesktop.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
@@ -10,14 +12,17 @@ namespace LoCyanFrpDesktop
 {
     internal static class Global
     {
-        public static readonly bool DebugMode = Properties.Settings.Default.DebugMode;
+        public static readonly string PATH = AppDomain.CurrentDomain.BaseDirectory;
+        public static readonly DateTime StartTime = DateTime.Now;
         public static bool LoginedByConsole = false;
-        public const string Version = "2.1.0";
-        public const string Branch = "RC";
-        public const int Revision = 4;
+        public const string Version = "2.2.0";
+        public const string Branch = "Alpha";
+        public const int Revision = 1;
         public static readonly BuildInfo BuildInfo = new();
         public const string Developer = "Shiroiame-Kusu & Daiyangcheng";
         public const string Copyright = "Copyright © 2021 - 2024 杭州樱芸网络科技有限公司 All Rights Reserved";
+        public static Config Config = new();
+        public static SecureString Password = new();
         public static List<string> Tips = new() {
             "Tips:他们说下载的时候把电脑抱起来摇匀, 下载速度会更快哦",
             "Tips:LocyanFrp永远不会跑路, 就像你家楼下清仓甩卖的店一样",

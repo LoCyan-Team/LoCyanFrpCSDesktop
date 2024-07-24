@@ -33,7 +33,7 @@ namespace LoCyanFrpDesktop.Dashboard
             _BuildInfo.Text = Global.BuildInfo.ToString();
             _Developer.Text = $"开发者: {Global.Developer}";
             _Copyright.Text = Global.Copyright;
-            FrpcPath.Text = Properties.Settings.Default.FrpcPath;
+            FrpcPath.Text = Global.Config.FrpcPath;
         }
         public void Select_Click(object sender, RoutedEventArgs e)
         {
@@ -45,7 +45,7 @@ namespace LoCyanFrpDesktop.Dashboard
             if (dialog.ShowDialog() ?? false)
             {
                 FrpcPath.Text = dialog.FileName;
-                Properties.Settings.Default.FrpcPath = FrpcPath.Text;
+                Global.Config.FrpcPath = FrpcPath.Text;
 
             }
         }
@@ -57,14 +57,12 @@ namespace LoCyanFrpDesktop.Dashboard
                 return;
             }
             Access.DashBoard.Close();
-            if (File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session.token"))) {
-                File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session.token"));
-
-            }
             
-            Properties.Settings.Default.FrpToken = null;
-            Properties.Settings.Default.LoginToken = null;
-            Properties.Settings.Default.password = null;
+            Global.Config.FrpToken = null;
+            Global.Config.Token = null;
+            Global.Config.LoginToken = null;
+            Global.Password = null;
+            new ConfigManager(FileMode.Create);
             MainWindow.islogin = false;
             Access.MainWindow.Width = double.NaN;
             Access.MainWindow.Show();

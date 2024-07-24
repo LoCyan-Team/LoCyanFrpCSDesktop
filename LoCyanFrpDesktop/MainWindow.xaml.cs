@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Net.Http;
 using Newtonsoft.Json;
 using System.Windows.Forms;
@@ -20,17 +13,14 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Path = System.IO.Path;
 using System.Security;
-using MessageBox = HandyControl.Controls.MessageBox;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Appearance;
 using System.ComponentModel;
 using Microsoft.Win32;
-using System.Windows.Media.Effects;
 using LoCyanFrpDesktop.Utils;
-using HandyControl.Tools.Extension;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-using HandyControl.Controls;
+using System.Windows.Shapes;
+using System.Runtime.CompilerServices;
 
 namespace LoCyanFrpDesktop
 {
@@ -50,6 +40,8 @@ namespace LoCyanFrpDesktop
         public static int Inbound;
         public static int Outbound;
         public static long Traffic;
+        private static string password;
+        
         public MainWindow()
         {
             //InitialBanner initialBanner = new();
@@ -57,24 +49,24 @@ namespace LoCyanFrpDesktop
             //initialBanner.Show();
             //initialBanner.Hide();
             InitializeComponent();
-            if (Random.Shared.Next(0, 100) == Random.Shared.Next(0, 100))
+            if (Random.Shared.Next(0, 10000) == 5000)
             {
                 throw new Exception("这是一个彩蛋，万分之一的机会");
             }
 
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
             this.Icon = new BitmapImage(iconUri);
-            if (Global.LoginedByConsole && Properties.Settings.Default.username != null && Properties.Settings.Default.password != null)
+            if (Global.LoginedByConsole && Global.Config.Username != null && Global.Password != null)
             {
-                Login(Properties.Settings.Default.username, Properties.Settings.Default.password);
+                Login(Global.Config.Username, ConvertToUnsecureString(Global.Password));
             }
             Tips.Text = Global.Tips[Random.Shared.Next(0, Global.Tips.Count - 1)];
             CheckNetworkAvailability();
-
+            _Login.IsEnabled = true;
             DataContext = this;
             Access.MainWindow = this;
             Update.Init();
-
+            ScheduledTask.Init();
 
         }
         private async void CheckNetworkAvailability()
@@ -127,24 +119,25 @@ namespace LoCyanFrpDesktop
         {
             islogin = await CheckLogined();
             if (islogin)
-            {
-                Properties.Settings.Default.LoginToken = token_auto;
-                Properties.Settings.Default.username = username_auto;
-                Properties.Settings.Default.FrpToken = UserInfo.Token;
+            {   
+
+                Global.Config.Token = token_auto;
+                Global.Config.Username = username_auto;
+                Global.Config.FrpToken = UserInfo.Token;
                 Avatar = UserInfo.Avatar;
                 Inbound = UserInfo.Inbound;
                 Outbound = UserInfo.Outbound;
                 Traffic = UserInfo.Traffic;
                 DashBoard = new DashBoard();
                 DashBoard.Show();
-                Close();
+                
                 Access.DashBoard.CheckIfFrpcInstalled();
             }
         }
 
         private async Task<bool> CheckLogined()
         {
-            string path = ".//session.token";
+            /*string path = ".//session.token";
             if (!File.Exists(path))
             {
                 return false;
@@ -181,18 +174,52 @@ namespace LoCyanFrpDesktop
                         return false;
                     }
                 }
+            }*/
+            string[] token_split;
+            try
+            {
+                char[] delimiters = { '|' };
+                token_split = Global.Config.LoginToken.Split(delimiters);
+                username_auto = token_split[0];
+                token_auto = token_split[1];
+            }
+            catch
+            {
+                return false;
+            }
+            using (var HttpClient = new HttpClient())
+            {
+                string url = $"https://api.locyanfrp.cn/Account/info?username={username_auto}&token={token_auto}";
+                HttpResponseMessage response = await HttpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                string jsonString = await response.Content.ReadAsStringAsync();
+                var InfoResponseObject = JsonConvert.DeserializeObject<InfoResponseObject>(jsonString);
+                UserInfo = InfoResponseObject;
+
+                if (InfoResponseObject.Status == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
         private async void Login_Click(object sender, RoutedEventArgs e)
         {
+            _Login.IsEnabled = false;
             string username = Username.Text;
             SecureString secure_password = Password.SecurePassword;
             string password = ConvertToUnsecureString(secure_password);
-            await Login(username, password);
+            if(!(await Login(username, password)))
+            {
+                _Login.IsEnabled = true;
+            }
 
         }
-        public async Task Login(string username, string password)
+        public async Task<bool> Login(string username, string password)
         {
             // 使用密码，例如验证或其他操作
             if (!string.IsNullOrEmpty(password))
@@ -224,6 +251,7 @@ namespace LoCyanFrpDesktop
                             if (responseObject.Status != 0)
                             {
                                 Logger.MsgBox("账号或密码错误！", "警告", 0, 48, 0);
+                                return false;
                             }
                             else
                             {
@@ -232,17 +260,17 @@ namespace LoCyanFrpDesktop
                                 Inbound = responseObject.UserData.Inbound;
                                 Outbound = responseObject.UserData.Outbound;
                                 Traffic = responseObject.UserData.Traffic;
-                                Properties.Settings.Default.LoginToken = responseObject.Token;
-                                Properties.Settings.Default.username = responseObject.UserData.Username;
-                                Properties.Settings.Default.FrpToken = responseObject.UserData.FrpToken;
-                                string path = ".//session.token";
-                                string text = $"{responseObject.UserData.Username}|{responseObject.Token}";
-                                File.WriteAllText(path, text);
+                                Global.Config.Token = responseObject.Token;
+                                Global.Config.Username = responseObject.UserData.Username;
+                                Global.Config.FrpToken = responseObject.UserData.FrpToken;
+                                Global.Config.LoginToken = $"{responseObject.UserData.Username}|{responseObject.Token}";
+                                //File.WriteAllText(path, text);
                                 islogin = true;
                                 DashBoard = new DashBoard();
                                 DashBoard.Show();
                                 Close();
                                 Access.DashBoard.CheckIfFrpcInstalled();
+                                return true;
 
                             }
                         }
@@ -261,6 +289,7 @@ namespace LoCyanFrpDesktop
             {
                 Logger.MsgBox("用户名 / 密码不能为空!", "警告", 0, 48, 0);
             }
+            return false;
         }
 
         // 将 SecureString 转化为 string

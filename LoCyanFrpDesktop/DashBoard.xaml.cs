@@ -26,6 +26,7 @@ using LoCyanFrpDesktop.Utils;
 using Wpf.Ui.Common;
 using Microsoft.VisualBasic;
 using System.Threading;
+using System.Windows.Shapes;
 
 namespace LoCyanFrpDesktop
 {
@@ -36,7 +37,6 @@ namespace LoCyanFrpDesktop
     {
         public static bool isFrpcInstalled;
         //public static Snackbar Snackbar = new Snackbar();
-        public static string FrpcPathConfig = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "FrpcPath.conf");
         public double originalCenterX;
         public double originalCenterY;
         /// <summary>
@@ -55,39 +55,9 @@ namespace LoCyanFrpDesktop
         
         public bool CheckIfFrpcInstalled()
         {
-            if (!File.Exists(FrpcPathConfig))
+            if (!string.IsNullOrEmpty(Global.Config.FrpcPath))
             {
-                File.Create(FrpcPathConfig);
-                bool isConfirmed = Logger.MsgBox("您需要我们自动为您安装frpc吗?", "未检测到您安装的frpc", 1, 47, 1);
-                if(isConfirmed)
-                {
-                    DownloadFrpc();
-                }
-                return false;
-            }else
-            {
-                StreamReader PathConfig = new StreamReader(FrpcPathConfig);
-                string line = PathConfig.ReadLine();
-                PathConfig.Close();
-                if (line != null)
-                {
-                    if (!File.Exists(line))
-                    {
-                        bool isConfirmed = Logger.MsgBox("您需要我们自动为您安装frpc吗?", "未检测到您安装的frpc", 1, 47, 1);
-                        if (isConfirmed)
-                        {
-                            DownloadFrpc();
-                        }
-                        return false;
-                    }
-                    else
-                    {
-                        Properties.Settings.Default.FrpcPath = line;
-                        return true;
-                    }
-                    
-                }
-                else
+                if (!File.Exists(Global.Config.FrpcPath))
                 {
                     bool isConfirmed = Logger.MsgBox("您需要我们自动为您安装frpc吗?", "未检测到您安装的frpc", 1, 47, 1);
                     if (isConfirmed)
@@ -96,10 +66,21 @@ namespace LoCyanFrpDesktop
                     }
                     return false;
                 }
-                
-                
+                else
+                {
+                    return true;
+                }
+
             }
-            
+            else
+            {
+                bool isConfirmed = Logger.MsgBox("您需要我们自动为您安装frpc吗?", "未检测到您安装的frpc", 1, 47, 1);
+                if (isConfirmed)
+                {
+                    DownloadFrpc();
+                }
+                return false;
+            }
             return false;
         }
         public void DownloadFrpc()

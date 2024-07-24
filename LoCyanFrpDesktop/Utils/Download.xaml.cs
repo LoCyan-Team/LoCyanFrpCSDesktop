@@ -203,40 +203,7 @@ namespace LoCyanFrpDesktop.Utils
                 {
                     //CrashInterception.ShowException(ex);
                 }
-                Properties.Settings.Default.FrpcPath = path;
-                var ConfigPath = Path.Combine(DownloadPath, "FrpcPath.conf");
-
-                if (File.Exists(ConfigPath))
-                {
-                    StreamReader sr = new StreamReader(ConfigPath);
-                    if (string.IsNullOrEmpty(sr.ReadLine()))
-                    {
-                        sr.Close();
-                        StreamWriter sw = new StreamWriter(ConfigPath);
-                        sw.WriteLine(path);
-                        sw.Close();
-                    }
-                    else
-                    {
-                        sr.Close();
-                        File.Delete(ConfigPath);
-                        File.Create(ConfigPath);
-                        StreamWriter sw = new StreamWriter(ConfigPath);
-                        sw.WriteLine(path);
-                        sw.Close();
-                    }
-                }
-                else
-                {
-                    File.Create(ConfigPath);
-                    StreamWriter sw = new StreamWriter(ConfigPath);
-                    sw.WriteLine(path);
-                    sw.Close();
-
-                }
-
-
-                
+                Global.Config.FrpcPath = path;
                 Close();
             }
             catch (Exception ex) {

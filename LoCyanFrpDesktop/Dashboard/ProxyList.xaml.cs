@@ -71,7 +71,7 @@ namespace LoCyanFrpDesktop.Dashboard
             //Wait For Rewrite.
             //InitializeAutoLaunch();
             DataContext = this;
-            title_username.Text += Properties.Settings.Default.username;
+            title_username.Text += Global.Config.Username;
             Resources["BorderColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray;
             //BackgroundColor = Resources["ControlFillColorDefaultBrush"];
             BackgroundMenu = new();
@@ -156,8 +156,8 @@ namespace LoCyanFrpDesktop.Dashboard
         private async Task<ObservableCollection<string>> GetProxiesListAsync()
         {
             // 获取用户名和Token
-            string username = Properties.Settings.Default.username;
-            string token = Properties.Settings.Default.LoginToken;
+            string username = Global.Config.Username;
+            string token = Global.Config.Token;
             // 实例化序列
             GetProxiesResponseObject responseObject;
             // 创建新的 HttpClient 实例
@@ -255,9 +255,9 @@ namespace LoCyanFrpDesktop.Dashboard
             catch (Exception ex)
             {
 
-                return RunCmdCommand($" -u {Properties.Settings.Default.FrpToken} -p ", proxy_id, SelectedIndex);
+                return RunCmdCommand($" -u {Global.Config.FrpToken} -p ", proxy_id, SelectedIndex);
             }
-            return RunCmdCommand($" -u {Properties.Settings.Default.FrpToken} -p ",proxy_id, SelectedIndex);
+            return RunCmdCommand($" -u {Global.Config.FrpToken} -p ",proxy_id, SelectedIndex);
 
         }
 
@@ -280,7 +280,7 @@ namespace LoCyanFrpDesktop.Dashboard
             // 创建一个 ProcessStartInfo 对象
             ProcessStartInfo psi = new ProcessStartInfo
             {
-                FileName = Properties.Settings.Default.FrpcPath, // 指定要运行的命令行程序
+                FileName = Global.Config.FrpcPath, // 指定要运行的命令行程序
                 Arguments = command + ProxyID, // 使用 /k 参数保持 cmd 窗口打开，显示输出内容
                 Verb = "runas",
                 RedirectStandardOutput = true,

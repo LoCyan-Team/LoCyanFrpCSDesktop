@@ -11,6 +11,7 @@ using LoCyanFrpDesktop.Utils;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Security;
 
 namespace LoCyanFrpDesktop
 {
@@ -36,23 +37,30 @@ namespace LoCyanFrpDesktop
         {
             //bool openConsole = false;
             CrashInterception.Init();
-            
+            ConfigManager.Init();
             
             DispatcherUnhandledException += CurrentDomain_UnhandledException;
             DispatcherUnhandledException += (_, e) => CrashInterception.ShowException(e.Exception);
             int UsernameNum = 0;
             int PasswordNum = 0;
-            bool DebugMode = Global.DebugMode;
+            bool DebugMode = Global.Config.DebugMode;
             //string Username;
             //string Password;
             // 处理启动参数
             string[] args = e.Args;
-            
+            /*Task.Run(() =>
+            {
+                while (true) {
+                    using(ConfigManager ConfigManager = new(FileMode.Create))
+                    {
+                        Console.WriteLine("Saving...");
+                    }
+                    Thread.Sleep(1000);
+                }
+            });*/
             base.OnStartup(e);
-
-            Thread.Sleep(3000);
             //MainWindow mainWindow = new();
-            
+
 
             if (args.Length > 0)
             {   
@@ -75,9 +83,14 @@ namespace LoCyanFrpDesktop
                     Username = args[UsernameNum + 1];
                     Password = args[PasswordNum + 1];
                     if (Password != null && Username != null)
-                    {
-                        LoCyanFrpDesktop.Properties.Settings.Default.username = Username;
-                        LoCyanFrpDesktop.Properties.Settings.Default.password = Password;
+                    {   
+                        Global.Config.Username = Username;
+                        foreach (char c in Password.ToCharArray()) {
+                            Global.Password.AppendChar(c);
+                        }
+                        
+                        //LoCyanFrpDesktop.Properties.Settings.Default.username = Username;
+                        //LoCyanFrpDesktop.Properties.Settings.Default.password = Password;
                         Global.LoginedByConsole = true;
                     }
                 }
