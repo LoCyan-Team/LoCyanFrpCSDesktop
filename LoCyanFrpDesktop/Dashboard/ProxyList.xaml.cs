@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -87,7 +87,7 @@ namespace LoCyanFrpDesktop.Dashboard
                 using (var client = new HttpClient()) {
                     client.BaseAddress = new Uri(MainWindow.Avatar);
                     var Avatar = await client.GetAsync(client.BaseAddress).Await().Content.ReadAsStreamAsync();
-                    var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Avatar.png");
+                    var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./UserConfig/Avatar.png");
                     
                     if (File.Exists(path))
                     {
