@@ -130,7 +130,7 @@ namespace LoCyanFrpDesktop
                 Traffic = UserInfo.Traffic;
                 DashBoard = new DashBoard();
                 DashBoard.Show();
-                
+                Close();
                 Access.DashBoard.CheckIfFrpcInstalled();
             }
         }
