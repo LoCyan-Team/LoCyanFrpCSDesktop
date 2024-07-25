@@ -1,4 +1,4 @@
-﻿using LoCyanFrpDesktop.Utils;
+using LoCyanFrpDesktop.Utils;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -57,8 +57,8 @@ namespace LoCyanFrpDesktop.Dashboard
                 return;
             }
             Access.DashBoard.Close();
-            if (File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session.token"))) {
-                File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "session.token"));
+            if (File.Exists(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./UserConfig/Information.json"))) {
+                File.Delete(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "./UserConfig/Information.json"));
 
             }
             
