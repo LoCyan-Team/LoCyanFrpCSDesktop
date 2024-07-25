@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,6 +31,7 @@ using LoCyanFrpDesktop.Utils;
 using HandyControl.Tools.Extension;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using HandyControl.Controls;
+using static System.Windows.Forms.AxHost;
 
 namespace LoCyanFrpDesktop
 {
@@ -144,20 +145,18 @@ namespace LoCyanFrpDesktop
 
         private async Task<bool> CheckLogined()
         {
-            string path = ".//session.token";
+            string path = "./UserConfig/Information.json";
             if (!File.Exists(path))
             {
                 return false;
             }
             else
             {
-                string[] token_split;
                 try
                 {
-                    char[] delimiters = { '|' };
-                    token_split = File.ReadAllText(path).Split(delimiters);
-                    username_auto = token_split[0];
-                    token_auto = token_split[1];
+                    var PathObject = JsonConvert.DeserializeObject<PathObject>(File.ReadAllText(path));
+                    username_auto = PathObject.Username;
+                    token_auto = PathObject.Token;
                 }
                 catch
                 {
@@ -235,8 +234,9 @@ namespace LoCyanFrpDesktop
                                 Properties.Settings.Default.LoginToken = responseObject.Token;
                                 Properties.Settings.Default.username = responseObject.UserData.Username;
                                 Properties.Settings.Default.FrpToken = responseObject.UserData.FrpToken;
-                                string path = ".//session.token";
-                                string text = $"{responseObject.UserData.Username}|{responseObject.Token}";
+                                string path = "./UserConfig/Information.json";
+                                string text = $"{{\n  \"Username\": \"{responseObject.UserData.Username}\",\n  \"Token\": \"{responseObject.Token}\"\n}}";
+                                Directory.CreateDirectory("./UserConfig");
                                 File.WriteAllText(path, text);
                                 islogin = true;
                                 DashBoard = new DashBoard();
@@ -436,6 +436,12 @@ namespace LoCyanFrpDesktop
         public int Inbound { get; set; }
         public int Outbound { get; set; }
         public string? Avatar { get; set; }
+    }
+
+    public class PathObject
+    {
+        public string Username { get; set; }
+        public string Token { get; set; }
     }
 
 }
