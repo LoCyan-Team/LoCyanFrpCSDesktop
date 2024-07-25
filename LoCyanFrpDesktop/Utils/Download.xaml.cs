@@ -1,4 +1,4 @@
-﻿using Downloader;
+using Downloader;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -195,6 +195,8 @@ namespace LoCyanFrpDesktop.Utils
                 {
                     File.Move(Path.Combine(DownloadPath, "Temp", FolderName, "frpc.exe"), Path.Combine(DownloadPath, "frpc.exe"));
                 }
+                Directory.Delete(Path.Combine(DownloadPath, "Temp"), true);
+                File.Delete(Path.Combine(DownloadPath, "frpc.temp")); // WHY 不删文件？？
                 string path = Path.Combine(DownloadPath, "frpc.exe");
                 try
                 {
