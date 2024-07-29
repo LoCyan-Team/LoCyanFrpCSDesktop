@@ -12,6 +12,9 @@ using System.Windows.Threading;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Security;
+using CefSharp.Wpf;
+using System.Runtime.ConstrainedExecution;
+using CefSharp;
 
 namespace LoCyanFrpDesktop
 {
@@ -60,8 +63,15 @@ namespace LoCyanFrpDesktop
             });*/
             base.OnStartup(e);
             //MainWindow mainWindow = new();
+            var settings = new CefSettings()
+            {
+                //By default CefSharp will use an in-memory cache, you need to specify a Cache Folder to persist data
+                CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CefSharp\\Cache"),
+                LogSeverity = LogSeverity.Verbose,
+                LogFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs\\CEF.log")
+            };
 
-
+            Cef.Initialize(settings);
             if (args.Length > 0)
             {   
                 int i = 0;
@@ -117,6 +127,11 @@ namespace LoCyanFrpDesktop
                 }
             }
             
+        }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            Cef.Shutdown();
+            base.OnExit(e);
         }
         private static void CurrentDomain_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {

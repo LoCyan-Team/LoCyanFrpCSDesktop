@@ -55,11 +55,17 @@
                 SelectedPageIndex="0">
                 <ui:NavigationStore.Items>
                     <ui:NavigationItem
-                            Content="开始"
-                            Icon="Home24"
-                            PageTag="ProxyList"
-                            PageType="{x:Type Dashboard:ProxyList}" />
+                        Content="开始"
+                        Icon="Home24"
+                        PageTag="Home"
+                        PageType="{x:Type Dashboard:Home}" />
                     <ui:NavigationSeparator />
+                    <ui:NavigationItem
+                        Content="隧道列表"
+                        Icon="List24"
+                        PageTag="ProxyList"
+                        PageType="{x:Type Dashboard:ProxyList}"
+                        />
                     <ui:NavigationItem
                         Content="运行状态"
                         Icon="WindowConsole20"

@@ -23,25 +23,13 @@ using System.Windows.Threading;
 using System.Text.RegularExpressions;
 using System.IO;
 using static LoCyanFrpDesktop.Utils.PNAP;
-using System.Drawing.Printing;
-using System.Xml.Linq;
-using HandyControl.Tools.Extension;
 using MenuItem = Wpf.Ui.Controls.MenuItem;
-using Wpf.Ui.Appearance;
-using System.Reflection;
-using Wpf.Ui.Styles.Controls;
-using ContextMenu2 = Wpf.Ui.Styles.Controls.ContextMenu;
 using ContextMenu = System.Windows.Controls.ContextMenu;
-using System.DirectoryServices.ActiveDirectory;
-using System.Printing;
-using Microsoft.Exchange.WebServices.Data;
 using System.Windows.Media.Animation;
 using System.Drawing;
 using System.Windows.Shapes;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
-using Brush = System.Windows.Media.Brush;
-using System.Runtime.CompilerServices;
 using LoCyanFrpDesktop.Extensions;
 using Microsoft.Win32.SafeHandles;
 
@@ -71,67 +59,17 @@ namespace LoCyanFrpDesktop.Dashboard
             //Wait For Rewrite.
             //InitializeAutoLaunch();
             DataContext = this;
-            title_username.Text += Global.Config.Username;
             Resources["BorderColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray;
             //BackgroundColor = Resources["ControlFillColorDefaultBrush"];
             BackgroundMenu = new();
             //Inbound.Text += MainWindow.Inbound;
             //OutBound.Text += MainWindow.Outbound;
-            Traffic.Text += (MainWindow.Traffic / 1024) + "GB";
-            RefreshAvatar();
-        }
-        private async void RefreshAvatar()
-        {
-            try
+            if(Home.AvatarImage != null)
             {
-                using (var client = new HttpClient()) {
-                    client.BaseAddress = new Uri(MainWindow.Avatar);
-                    var Avatar = await client.GetAsync(client.BaseAddress).Await().Content.ReadAsStreamAsync();
-                    var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Avatar.png");
-                    
-                    if (File.Exists(path))
-                    {
-                        File.Delete(path);
-                    }
-
-                    using(FileStream fileStream = new(path, FileMode.Create))
-                    {
-                        byte[] bytes = new byte[Avatar.Length];
-                        Avatar.Read(bytes, 0, bytes.Length);
-                        // 设置当前流的位置为流的开始
-                        Avatar.Seek(0, SeekOrigin.Begin);
-
-                        // 把 byte[] 写入文件
-                        
-                        BinaryWriter bw = new BinaryWriter(fileStream);
-                        bw.Write(bytes);
-                        bw.Close();
-                        fileStream.Close();
-                    }
-                    BitmapImage bitmap = new BitmapImage();
-
-                    // 设置 BitmapImage 的 UriSource 属性为图片文件的路径
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
-                    bitmap.EndInit();
-                    var a = new ImageBrush(bitmap)
-                    {
-                        Stretch = Stretch.UniformToFill,
-
-                    };
-
-                    Dispatcher.Invoke(() =>
-                    {
-                        this.Avatar.Background = a;
-                    });
-                    
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Logger.MsgBox("无法获取您的头像, 请稍后重试", "LocyanFrp", 0, 48, 1);
+                Dispatcher.Invoke(() =>
+                {
+                    this.Avatar.Background = Home.AvatarImage;
+                });
             }
         }
 
@@ -227,6 +165,11 @@ namespace LoCyanFrpDesktop.Dashboard
             
             string proxy_name = SelectedProxy;
             int proxy_id = 0;
+            if (Global.Config.FrpcPath == null)
+            {
+                Logger.MsgBox("您尚未安装Frpc,请先安装或者手动指定", "LocyanFrp", 0, 48, 1);
+                return 0;
+            }
             foreach (var item in Proxieslist)
             {
                 if (item.ProxyName == proxy_name)
@@ -241,7 +184,7 @@ namespace LoCyanFrpDesktop.Dashboard
                 Logger.MsgBox("无法将隧道名解析为隧道ID，请检查自己的隧道配置", "LocyanFrp", 0, 48, 1);
                 return 0;
             }
-            Access.DashBoard.Navigation.Navigate(1);
+            Access.DashBoard.Navigation.Navigate(2);
             // 运行frp
             try
             {
