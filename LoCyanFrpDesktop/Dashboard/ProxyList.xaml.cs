@@ -59,7 +59,7 @@ namespace LoCyanFrpDesktop.Dashboard
             //Wait For Rewrite.
             //InitializeAutoLaunch();
             DataContext = this;
-            Resources["BorderColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray;
+            Resources["BorderColor"] = Global.isDarkThemeEnabled ? Colors.White : Colors.LightGray;
             //BackgroundColor = Resources["ControlFillColorDefaultBrush"];
             BackgroundMenu = new();
             //Inbound.Text += MainWindow.Inbound;
@@ -138,16 +138,6 @@ namespace LoCyanFrpDesktop.Dashboard
                 Dispatcher.Invoke(() =>
                 {
                     ListPanel.Children.Add(new ProxyCard(responseObject.Proxies[i], i));
-                    /*ListPanel.Children.Add(new Card()
-                    {
-                        //Background = new SolidColorBrush(Colors.White),
-                        Padding = new Thickness(10),
-                        Margin = new Thickness(0, 0, 10, 0),
-                        HorizontalAlignment = HorizontalAlignment.Stretch,
-                        VerticalAlignment = VerticalAlignment.Stretch,
-                        MinHeight = 50,
-                        MinWidth = 100
-                    });*/
 
                 });
 
@@ -367,7 +357,7 @@ namespace LoCyanFrpDesktop.Dashboard
                 //this.OverridesDefaultStyle = true;
                 //this.Style = ProxyList.card.Style;
                 //Theme.Apply(ThemeType.Light);
-                this.Background = new SolidColorBrush(MainWindow.DarkThemeEnabled ? Color.FromRgb(53, 53, 53) : Color.FromRgb(210, 210, 210));
+                this.Background = new SolidColorBrush(Global.isDarkThemeEnabled ? Color.FromRgb(53, 53, 53) : Color.FromRgb(210, 210, 210));
                 //this.Background = new SolidColorBrush(!string.IsNullOrEmpty((string)ProxyList.BackgroundColor) ? (Color)ProxyList.BackgroundColor : Colors.Gray);
                 //this.Background = new SolidColorBrush((Color)ProxyList.BackgroundColor);
                 this.BorderThickness = new Thickness(2);
@@ -470,10 +460,10 @@ namespace LoCyanFrpDesktop.Dashboard
                 // 定义样式的模板
                 ControlTemplate template = new ControlTemplate(typeof(ContextMenu));
                 FrameworkElementFactory borderFactory = new FrameworkElementFactory(typeof(Border));
-                borderFactory.SetValue(Border.BackgroundProperty, new SolidColorBrush(MainWindow.DarkThemeEnabled ? Color.FromRgb(53, 53, 53) : Color.FromRgb(210, 210, 210)));
+                borderFactory.SetValue(Border.BackgroundProperty, new SolidColorBrush(Global.isDarkThemeEnabled ? Color.FromRgb(53, 53, 53) : Color.FromRgb(210, 210, 210)));
                 borderFactory.SetValue(Border.BorderThicknessProperty, new Thickness(1));
                 borderFactory.SetValue(Border.CornerRadiusProperty, new CornerRadius(5));
-                this.Foreground = new SolidColorBrush(MainWindow.DarkThemeEnabled ? Colors.White : Colors.Black);
+                this.Foreground = new SolidColorBrush(Global.isDarkThemeEnabled ? Colors.White : Colors.Black);
                 FrameworkElementFactory stackPanelFactory = new FrameworkElementFactory(typeof(StackPanel));
                 stackPanelFactory.SetValue(StackPanel.IsItemsHostProperty, true);
 
@@ -484,22 +474,6 @@ namespace LoCyanFrpDesktop.Dashboard
 
                 // 应用样式
                 this.Style = roundedContextMenuStyle;
-                //this.Style = ProxyList.DefaultStyleKeyProperty;
-                //this.OverridesDefaultStyle = true;
-                /*
-                 <ContextMenu Name="ListMenu">
-                                <ui:MenuItem Header="刷新" Click="Refresh_Click"/>
-                                <Separator/>
-                                <ui:MenuItem Header="新建隧道" Click="CreateNewProxy_Click"/>
-                                <ui:MenuItem Header="删除隧道" Click="DeleteProxy_Click"/>
-                                <Separator/>
-                                <ui:MenuItem Header="启动隧道" Click="StartProxy_Click"/>
-                                <ui:MenuItem Header="停止隧道" Click="StopProxy_Click"/>
-                            </ContextMenu>
-
-                 */
-                //this.Background = new SolidColorBrush(Color.FromRgb(45,45,45));
-
                 MenuItem Refresh = new MenuItem()
                 {
                     Header = "刷新",
@@ -653,10 +627,10 @@ namespace LoCyanFrpDesktop.Dashboard
         public string RemotePort { get; set; }
 
         [JsonProperty("use_compression")]
-        public int UseCompression { get; set; }
+        public string UseCompression { get; set; }
 
         [JsonProperty("use_encryption")]
-        public int UseEncryption { get; set; }
+        public string UseEncryption { get; set; }
         [JsonProperty("domain")]
         public string Domain { get; set; }
         public int Node { get; set; }

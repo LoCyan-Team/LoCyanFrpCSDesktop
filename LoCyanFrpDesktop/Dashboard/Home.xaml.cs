@@ -31,19 +31,32 @@ namespace LoCyanFrpDesktop.Dashboard
         public static ImageBrush AvatarImage;
         public Home()
         {
-            InitializeComponent();
+            InitializeCustomComponents();
             //Wait For Rewrite.
             //InitializeAutoLaunch();
-            DataContext = this;
-            title_username.Text += Global.Config.Username;
-            Resources["BorderColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray;
-            //BackgroundColor = Resources["ControlFillColorDefaultBrush"];
-            //Inbound.Text += MainWindow.Inbound;
-            //OutBound.Text += MainWindow.Outbound;
-            Traffic.Text += (MainWindow.Traffic / 1024) + "GB";
-            
             RefreshAvatar();
             FetchAnnouncement();
+        }
+        protected override void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+        }
+
+        private void InitializeCustomComponents()
+        {
+            Cef.Initialize(new CefSettings()
+            {
+                //By default CefSharp will use an in-memory cache, you need to specify a Cache Folder to persist data
+                CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CefSharp\\Cache"),
+                LogSeverity = LogSeverity.Verbose,
+                LogFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs\\CEF.log")
+            });
+            InitializeComponent();
+            DataContext = this;
+            title_username.Text += Global.Config.Username;
+            Resources["BorderColor"] = Global.isDarkThemeEnabled ? Colors.White : Colors.LightGray;
+            Traffic.Text += $"{(MainWindow.Traffic / 1024)}GB";
+            BandWidth.Text += $"{MainWindow.Inbound}/{MainWindow.Outbound}Mbps";
         }
         private async void FetchAnnouncement()
         {
@@ -57,7 +70,7 @@ namespace LoCyanFrpDesktop.Dashboard
                     if (result2 != null && (bool)result2["status"]) {
                         var html = Markdown.ToHtml(result2["broadcast"].ToString());
                         var htmlDoc = new HtmlDocument();
-                        if (MainWindow.DarkThemeEnabled)
+                        if (Global.isDarkThemeEnabled)
                         {
                             htmlDoc.LoadHtml(html);
                             var cssContent = "* { color: white; } a { color: aqua}";
@@ -68,7 +81,7 @@ namespace LoCyanFrpDesktop.Dashboard
                             newHeadNode.AppendChild(scriptNode);
                             htmlDoc.DocumentNode.PrependChild(newHeadNode);
                         }
-                        Browser.LoadHtml(MainWindow.DarkThemeEnabled ? htmlDoc.DocumentNode.OuterHtml: html, "http://localhost",Encoding.UTF8);
+                        Browser.LoadHtml(Global.isDarkThemeEnabled ? htmlDoc.DocumentNode.OuterHtml: html, "http://localhost",Encoding.UTF8);
                         Browser.LoadingStateChanged += OnLoadingStateChanged;
                         
                     }

@@ -48,10 +48,11 @@ namespace LoCyanFrpDesktop
 
             //initialBanner.Show();
             //initialBanner.Hide();
+            
             InitializeComponent();
             if (Random.Shared.Next(0, 10000) == 5000)
             {
-                throw new Exception("这是一个彩蛋，万分之一的机会");
+                CrashInterception.ShowException(new Exception("这是一个彩蛋，万分之一的机会"));
             }
 
             Uri iconUri = new Uri("pack://application:,,,/LoCyanFrpDesktop;component/Resource/favicon.ico", UriKind.RelativeOrAbsolute);
@@ -67,6 +68,7 @@ namespace LoCyanFrpDesktop
             Access.MainWindow = this;
             Update.Init();
             ScheduledTask.Init();
+
 
         }
         private async void CheckNetworkAvailability()
@@ -137,44 +139,6 @@ namespace LoCyanFrpDesktop
 
         private async Task<bool> CheckLogined()
         {
-            /*string path = ".//session.token";
-            if (!File.Exists(path))
-            {
-                return false;
-            }
-            else
-            {
-                string[] token_split;
-                try
-                {
-                    char[] delimiters = { '|' };
-                    token_split = File.ReadAllText(path).Split(delimiters);
-                    username_auto = token_split[0];
-                    token_auto = token_split[1];
-                }
-                catch
-                {
-                    return false;
-                }
-                using (var HttpClient = new HttpClient())
-                {
-                    string url = $"https://api.locyanfrp.cn/Account/info?username={username_auto}&token={token_auto}";
-                    HttpResponseMessage response = await HttpClient.GetAsync(url);
-                    response.EnsureSuccessStatusCode();
-                    string jsonString = await response.Content.ReadAsStringAsync();
-                    var InfoResponseObject = JsonConvert.DeserializeObject<InfoResponseObject>(jsonString);
-                    UserInfo = InfoResponseObject;
-
-                    if (InfoResponseObject.Status == 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }*/
             string[] token_split;
             try
             {
@@ -332,7 +296,7 @@ namespace LoCyanFrpDesktop
         }
 
 
-        public bool IsDarkThemeEnabled()
+        public static void IsDarkThemeEnabled()
         {
             const string RegistryKey = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
 
@@ -340,7 +304,7 @@ namespace LoCyanFrpDesktop
             int value = (int)Registry.GetValue(RegistryKey, "AppsUseLightTheme", 1);
 
             // 如果值为0，则深色主题已启用
-            return value == 0;
+            Global.isDarkThemeEnabled = (value == 0);
         }
         public void UiWindow_Loaded(object sender, RoutedEventArgs e)
         { /*
@@ -350,12 +314,27 @@ namespace LoCyanFrpDesktop
                 Watcher.Watch(this, BackgroundType.Tabbed, true);
             }
             Theme.Apply(Global.Settings.Serein.UseDarkTheme ? ThemeType.Dark : ThemeType.Light);*/
-            DarkThemeEnabled = IsDarkThemeEnabled();
+            //DarkThemeEnabled = IsDarkThemeEnabled();
             //DarkThemeEnabled = false;
-            Theme.Apply(DarkThemeEnabled ? ThemeType.Dark : ThemeType.Light, WindowBackdropType = BackgroundType.Mica);
+            switch (Global.Config.AppliedTheme)
+            {
+                case 0:
+                    IsDarkThemeEnabled();
+                    break;
+                case 1:
+                    Global.isDarkThemeEnabled = true;
+                    break;
+                case 2:
+                    Global.isDarkThemeEnabled = false;
+                    break;
+                default:
+                    IsDarkThemeEnabled();
+                    Global.Config.AppliedTheme = 0;
+                    break;
+            }
+            Theme.Apply(Global.isDarkThemeEnabled ? ThemeType.Dark : ThemeType.Light, WindowBackdropType = BackgroundType.Mica);
 
-            //MainForm.Background = new SolidColorBrush(DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke);
-            Color newColor = DarkThemeEnabled ? Colors.White : Colors.LightGray;
+            Color newColor = Global.isDarkThemeEnabled ? Colors.White : Colors.LightGray;
             Resources["ShadowColor"] = newColor;
 
         }

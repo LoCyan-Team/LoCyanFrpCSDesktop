@@ -55,7 +55,12 @@
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <ui:Card Grid.Column="1" Padding="10" Margin="10,10,0,15" VerticalAlignment="Bottom">
+                <ui:Card Height="40" Grid.Column="0" Padding="10" Margin="10,10,0,15" VerticalAlignment="Center">
+                    <StackPanel>
+                        <TextBlock Name="BandWidth" Margin="0,0,0,20" Text="上行/下行带宽: "/>
+                    </StackPanel>
+                </ui:Card>
+                <ui:Card Height="40" Grid.Column="1" Padding="10" Margin="10,10,0,15" VerticalAlignment="Center">
                     <StackPanel>
                         <!--<TextBlock Name="Inbound" Margin="0,0,0,20" Text="上行流量:"/>
                         <TextBlock Name="OutBound" Text="下行流量:"/>-->

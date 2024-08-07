@@ -27,6 +27,7 @@ using Wpf.Ui.Common;
 using Microsoft.VisualBasic;
 using System.Threading;
 using System.Windows.Shapes;
+using Wpf.Ui.Appearance;
 
 namespace LoCyanFrpDesktop
 {
@@ -36,9 +37,8 @@ namespace LoCyanFrpDesktop
     public partial class DashBoard : UiWindow
     {
         public static bool isFrpcInstalled;
-        //public static Snackbar Snackbar = new Snackbar();
-        public double originalCenterX;
-        public double originalCenterY;
+        private static SolidColorBrush DarkBrush = new SolidColorBrush(Color.FromRgb(32, 32, 32));
+        private static SolidColorBrush LightBrush = new SolidColorBrush(Color.FromRgb(250, 250, 250));
         /// <summary>
         /// 
         /// </summary>
@@ -85,14 +85,6 @@ namespace LoCyanFrpDesktop
         }
         public void DownloadFrpc()
         {
-            //double screenWidth = SystemParameters.WorkArea.Width;
-            //double screenHeight = SystemParameters.WorkArea.Height;
-
-            // 获取原窗口的中心点
-            //originalCenterX = Owner.Left + Owner.Width / 2;
-            //originalCenterY = Owner.Top + Owner.Height / 2;
-            //Left = originalCenterX - Width / 2;
-            //Top = originalCenterY - Height / 2;
             Download downloader = new Download();
             downloader.Owner = this;
             downloader.Show();
@@ -111,9 +103,7 @@ namespace LoCyanFrpDesktop
             Hide();
         }
         public void UiWindow_StateChanged(object sender, EventArgs e)
-        {/*
-            MaxHeight = SystemParameters.MaximizedPrimaryScreenHeight;
-            MaxWidth = SystemParameters.MaximizedPrimaryScreenWidth; */
+        {
         }
         public void UiWindow_ContentRendered(object sender, EventArgs e)
         {
@@ -133,10 +123,25 @@ namespace LoCyanFrpDesktop
         }
         public void UiWindow_Loaded(object sender, EventArgs e)
         {
-            Resources["ShadowColor"] = MainWindow.DarkThemeEnabled ? Colors.White : Colors.LightGray; ;
-            Resources["MainBackgroundColor"] = new SolidColorBrush(MainWindow.DarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke);
+            ChangeColor();
         }
-        
+        public void ChangeColor()
+        {
+            Resources["ShadowColor"] = Global.isDarkThemeEnabled ? Colors.White : Colors.LightGray;
+            SolidColorBrush solidColorBrush = new SolidColorBrush(Global.isDarkThemeEnabled ? Colors.LightGray : Colors.WhiteSmoke);
+            Resources["MainBackgroundColor"] = solidColorBrush;
+            if (Global.isDarkThemeEnabled)
+            {
+                this.Background = DarkBrush;
+                Theme.Apply(ThemeType.Dark);
+            }
+            else {
+                this.Background = LightBrush;
+                Theme.Apply(ThemeType.Light);
+            }
+            //Theme.Apply(Global.isDarkThemeEnabled ? ThemeType.Dark : ThemeType.Light);
+            //this.Background = solidColorBrush;
+        }
         
     }
 }

@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace LoCyanFrpDesktop.Utils
 {
-    class ScheduledTask
-    {
+    public class ScheduledTask
+    {   
+        private static List<Action> ScheduledActions = new List<Action>();
         public static void Init()
         {
-            Task.Run(() =>
+            ScheduledActions.Add(new Action(() =>
             {
                 while (true)
                 {
@@ -22,7 +23,21 @@ namespace LoCyanFrpDesktop.Utils
                     }
                     Thread.Sleep(1000);
                 }
-            });
+            }));
+            for (int i = 0; i < ScheduledActions.Count; i++)
+            {
+                Run(ScheduledActions[i]);
+            }
+        
+        }
+        private static async void Run(Action action) {
+                Task.Run(() => { 
+                    action();
+                });
+        }
+        public static void Add(Action action) { 
+            ScheduledActions.Add(action);
+            Run(action);
         }
     }
 }

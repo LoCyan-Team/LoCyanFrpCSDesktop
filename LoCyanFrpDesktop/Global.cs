@@ -22,6 +22,7 @@ namespace LoCyanFrpDesktop
         public const string Developer = "Shiroiame-Kusu & Daiyangcheng";
         public const string Copyright = "Copyright © 2021 - 2024 杭州樱芸网络科技有限公司 All Rights Reserved";
         public static Config Config = new();
+        public static bool isDarkThemeEnabled;
         public static SecureString Password = new();
         public static List<string> Tips = new() {
             "Tips:他们说下载的时候把电脑抱起来摇匀, 下载速度会更快哦",

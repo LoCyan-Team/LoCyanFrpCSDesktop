@@ -19,6 +19,6 @@ namespace LoCyanFrpDesktop.Utils
         public string FrpToken = "";
         public string FrpcPath = "";
         public bool DebugMode = false;
-
+        public int AppliedTheme = 0;
     }
 }
