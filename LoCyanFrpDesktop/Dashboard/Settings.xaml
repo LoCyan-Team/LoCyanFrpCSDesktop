@@ -48,16 +48,20 @@
                                 Content="选择文件"
                                 Icon="OpenFolder24"/>
                         </Grid>
-                        <DockPanel  HorizontalAlignment="Left" Width="100" >
+                        <DockPanel  HorizontalAlignment="Left" Width="110" >
                             <TextBlock DockPanel.Dock="Top" Text="主题设置" FontSize="12"/>
-                            <ComboBox Name="AppliedTheme" DockPanel.Dock="Bottom" SelectionChanged="AppliedTheme_SelectionChanged">
-                                <ComboBoxItem Content="跟随系统"></ComboBoxItem>
+                            <ComboBox Name="AppliedTheme" DockPanel.Dock="Bottom" Padding="10,8">
+                                <ComboBoxItem Content="跟随系统"/>
                                 <ComboBoxItem Content="深色"/>
                                 <ComboBoxItem Content="浅色"/>
                             </ComboBox>
                         </DockPanel>
-                        <ui:Button Name="SignOut" Margin="0,10" Icon="ArrowExit20" Content="退出登录" Click="SignOut_Click"/>
-                        
+                        <ui:Card HorizontalAlignment="Left" Width="150" Margin="0,10">
+                            <StackPanel>
+                                <ui:Button Name="CopyToken" Width="110" Margin="0,10" Icon="Copy24" Content="复制Token" Click="CopyToken_Click"/>
+                                <ui:Button Name="SignOut" Width="110" Margin="0,10" Icon="ArrowExit20" Content="退出登录" Click="SignOut_Click"/>
+                            </StackPanel>
+                        </ui:Card>
                     </StackPanel>
                     
                 </Grid>

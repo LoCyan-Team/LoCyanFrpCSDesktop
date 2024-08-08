@@ -26,18 +26,19 @@ namespace LoCyanFrpDesktop.Dashboard
     /// </summary>
     public partial class Settings : UiPage
     {
-        private static int i = 0;
+        
         public Settings()
         {   
 
             InitializeComponent();
             Access.Settings = this;
-            _Version.Text = $"版本: Ver {Global.Version}-{Global.Branch}{Global.Revision}";
+            _Version.Text = $"版本: Ver {Global.Version}-{Global.Branch}{((Global.Branch == "Alpha" || Global.Branch == "Beta") ? "." : "")}{Global.Revision}";
             _BuildInfo.Text = Global.BuildInfo.ToString();
             _Developer.Text = $"开发者: {Global.Developer}";
             _Copyright.Text = Global.Copyright;
             FrpcPath.Text = Global.Config.FrpcPath;
             AppliedTheme.SelectedIndex = Global.Config.AppliedTheme;
+            AppliedTheme.SelectionChanged += AppliedTheme_SelectionChanged;
         }
         public void Select_Click(object sender, RoutedEventArgs e)
         {
@@ -75,31 +76,33 @@ namespace LoCyanFrpDesktop.Dashboard
 
         private void AppliedTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
-            if(i > 0)
+            Global.Config.AppliedTheme = AppliedTheme.SelectedIndex;
+            switch (AppliedTheme.SelectedIndex)
             {
-                Global.Config.AppliedTheme = AppliedTheme.SelectedIndex;
-                switch (AppliedTheme.SelectedIndex)
-                {
-                    case 0:
-                        MainWindow.IsDarkThemeEnabled();
+                case 0:
+                    MainWindow.IsDarkThemeEnabled();
 
-                        break;
-                    case 1:
-                        Global.isDarkThemeEnabled = true;
-                        Theme.Apply(ThemeType.Dark);
-                        break;
-                    case 2:
-                        Global.isDarkThemeEnabled = false;
-                        Theme.Apply(ThemeType.Light);
-                        break;
-                    default:
-                        throw new IndexOutOfRangeException();
+                    break;
+                case 1:
+                    Global.isDarkThemeEnabled = true;
+                    Theme.Apply(ThemeType.Dark);
+                    break;
+                case 2:
+                    Global.isDarkThemeEnabled = false;
+                    Theme.Apply(ThemeType.Light);
+                    break;
+                default:
+                    throw new IndexOutOfRangeException();
 
-                }
-                Access.DashBoard.ChangeColor();
             }
-            i++;
+            Access.DashBoard.ChangeColor();
+
+        }
+
+        private void CopyToken_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(Global.Config.FrpToken);
+            Logger.MsgBox("LocyanFrpDesktop\n已经复制啦~", "LocyanFrpDesktop", 0, 47, 1);
         }
     }
 }
