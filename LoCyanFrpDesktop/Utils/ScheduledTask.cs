@@ -28,7 +28,6 @@ namespace LoCyanFrpDesktop.Utils
             {
                 Run(ScheduledActions[i]);
             }
-        
         }
         private static async void Run(Action action) {
                 Task.Run(() => { 

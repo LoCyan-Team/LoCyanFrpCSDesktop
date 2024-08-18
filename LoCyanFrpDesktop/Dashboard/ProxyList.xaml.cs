@@ -30,6 +30,7 @@ using System.Drawing;
 using System.Windows.Shapes;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
+using LoCyanFrpDesktop.Utils.Components;
 using LoCyanFrpDesktop.Extensions;
 using Microsoft.Win32.SafeHandles;
 
@@ -520,10 +521,8 @@ namespace LoCyanFrpDesktop.Dashboard
             }
             private void StartProxy_Click(object sender, RoutedEventArgs e)
             {
-                
                 try
                 {
-                    
                     int Index = PNAPList.FindIndex(Process => Process.ListIndex == (IndexID != -1 ? IndexID : throw new Exception()));
                     if (!(bool)PNAPList[Index].IsRunning)
                     {
@@ -547,8 +546,6 @@ namespace LoCyanFrpDesktop.Dashboard
                     }
                 }
                 
-
-
             }
             
             private void Refresh_Click(object sender, RoutedEventArgs e)
@@ -556,7 +553,7 @@ namespace LoCyanFrpDesktop.Dashboard
                 throw new NotImplementedException();
             }
 
-            private void StopProxy_Click(Object sender, RoutedEventArgs e)
+            private void StopProxy_Click(object sender, RoutedEventArgs e)
             {
                 //我在写什么，我不知道我在写些什么w
                 
@@ -607,40 +604,6 @@ namespace LoCyanFrpDesktop.Dashboard
         public int Count { get; set; }
         public List<Proxy> Proxies { get; set; }
     }
-    public class Proxy
-    {
-        public int Id { get; set; }
-
-        [JsonProperty("proxy_name")]
-        public string ProxyName { get; set; }
-
-        [JsonProperty("proxy_type")]
-        public string ProxyType { get; set; }
-
-        [JsonProperty("local_ip")]
-        public string LocalIp { get; set; }
-
-        [JsonProperty("local_port")]
-        public int LocalPort { get; set; }
-
-        [JsonProperty("remote_port")]
-        public string RemotePort { get; set; }
-
-        [JsonProperty("use_compression")]
-        public string UseCompression { get; set; }
-
-        [JsonProperty("use_encryption")]
-        public string UseEncryption { get; set; }
-        [JsonProperty("domain")]
-        public string Domain { get; set; }
-        public int Node { get; set; }
-
-        [JsonProperty("icp")]
-        public object Icp { get; set; } // icp 字段可能为 null，使用 object 类型表示
-    }
-
-    
-    
 }
 
 

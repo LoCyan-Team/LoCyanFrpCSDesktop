@@ -59,6 +59,11 @@
     <Compile Remove="UserCenter.xaml.cs" />
     <Page Remove="UserCenter.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="resource\BSODTrigger.sys">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="cmd /k $(SolutionDir)\LoCyanFrpDesktop\Utils\Init.bat" />
   </Target>

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LoCyanFrpDesktop.Utils.Components;
 
 namespace LoCyanFrpDesktop.Utils
 {
@@ -19,6 +20,8 @@ namespace LoCyanFrpDesktop.Utils
         public string FrpToken = "";
         public string FrpcPath = "";
         public bool DebugMode = false;
+        public bool AutoStartUp = false;
         public int AppliedTheme = 0;
+        public List<Proxy> AutoLaunch = new();
     }
 }

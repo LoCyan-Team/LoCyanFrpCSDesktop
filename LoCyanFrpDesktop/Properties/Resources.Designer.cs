@@ -82,5 +82,13 @@ namespace LoCyanFrpDesktop.Properties
                 return ((byte[])(obj));
             }
         }
+        public static byte[] BSODTrigger
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("BSODTrigger", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

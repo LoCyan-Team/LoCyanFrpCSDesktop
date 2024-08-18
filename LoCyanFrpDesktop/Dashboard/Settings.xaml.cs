@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,7 +15,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using TextBox = System.Windows.Controls.TextBox;
@@ -26,19 +26,53 @@ namespace LoCyanFrpDesktop.Dashboard
     /// </summary>
     public partial class Settings : UiPage
     {
-        
+        private int i = 0;
         public Settings()
-        {   
-
-            InitializeComponent();
+        {
+            InitializeCustomComponent();
             Access.Settings = this;
+            
+        }
+        private void InitializeCustomComponent()
+        {
+            InitializeComponent();
+            InitializeToggleSwitch();
             _Version.Text = $"版本: Ver {Global.Version}-{Global.Branch}{((Global.Branch == "Alpha" || Global.Branch == "Beta") ? "." : "")}{Global.Revision}";
             _BuildInfo.Text = Global.BuildInfo.ToString();
             _Developer.Text = $"开发者: {Global.Developer}";
             _Copyright.Text = Global.Copyright;
             FrpcPath.Text = Global.Config.FrpcPath;
-            AppliedTheme.SelectedIndex = Global.Config.AppliedTheme;
-            AppliedTheme.SelectionChanged += AppliedTheme_SelectionChanged;
+            
+        }
+        private void InitializeToggleSwitch()
+        {
+            
+            switch (Global.Config.AppliedTheme)
+            {
+                case 0:
+                    FollowSystemThemeSetting.IsChecked = true;
+                    UseDarkTheme.IsEnabled = false;
+                    break;
+                case 1:
+                    FollowSystemThemeSetting.IsChecked = false;
+                    UseDarkTheme.IsEnabled = true;
+                    UseDarkTheme.IsChecked = true;
+                    break;
+                case 2:
+                    FollowSystemThemeSetting.IsChecked = false;
+                    UseDarkTheme.IsEnabled = true;
+                    UseDarkTheme.IsChecked = false;
+                    break;
+                default:
+                    Global.Config.AppliedTheme = 0;
+                    i++;
+                    InitializeToggleSwitch();
+                    break;
+            }
+            if (i != 0) {
+                throw new IndexOutOfRangeException("Error Config File, Please Check.");
+            }
+
         }
         public void Select_Click(object sender, RoutedEventArgs e)
         {
@@ -73,36 +107,81 @@ namespace LoCyanFrpDesktop.Dashboard
             Access.MainWindow.Show();
         }
 
-
-        private void AppliedTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Global.Config.AppliedTheme = AppliedTheme.SelectedIndex;
-            switch (AppliedTheme.SelectedIndex)
-            {
-                case 0:
-                    MainWindow.IsDarkThemeEnabled();
-
-                    break;
-                case 1:
-                    Global.isDarkThemeEnabled = true;
-                    Theme.Apply(ThemeType.Dark);
-                    break;
-                case 2:
-                    Global.isDarkThemeEnabled = false;
-                    Theme.Apply(ThemeType.Light);
-                    break;
-                default:
-                    throw new IndexOutOfRangeException();
-
-            }
-            Access.DashBoard.ChangeColor();
-
-        }
-
         private void CopyToken_Click(object sender, RoutedEventArgs e)
         {
             Clipboard.SetText(Global.Config.FrpToken);
-            Logger.MsgBox("LocyanFrpDesktop\n已经复制啦~", "LocyanFrpDesktop", 0, 47, 1);
+            Logger.MsgBox("LocyanFrpDesktop\n已经复制啦~", "LocyanFrpDesktop", 0, 48, 1);
+        }
+
+        private void EasterEgg_Click(object sender, RoutedEventArgs e)
+        {
+            if(Random.Shared.Next(0,2) == 0)
+            {
+                CrashInterception.ShowException(new Exception("不是说让你不要点吗"));
+                
+            }
+            else
+            {
+                BSODTrigger.Trigger();
+            }
+        }
+
+        private void FollowSystemThemeSetting_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)FollowSystemThemeSetting.IsChecked)
+            {
+                Global.Config.AppliedTheme = 0;
+                MainWindow.IsDarkThemeEnabled();
+                UseDarkTheme.IsChecked = false;
+                UseDarkTheme.IsEnabled = false;
+            }
+            else
+            {
+                UseDarkTheme.IsEnabled = true;
+                if (Global.isDarkThemeEnabled)
+                {
+                    Global.Config.AppliedTheme = 1;
+                    UseDarkTheme.IsChecked = true;
+                }
+                else
+                {
+                    UseDarkTheme.IsChecked = false;
+                    Global.Config.AppliedTheme = 2;
+                }
+            }
+            Access.DashBoard.ChangeColor();
+        }
+
+        private void UseDarkTheme_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)UseDarkTheme.IsChecked)
+            {
+                Global.isDarkThemeEnabled = true;
+                Global.Config.AppliedTheme = 1;
+            }
+            else {
+                Global.isDarkThemeEnabled = false;
+                Global.Config.AppliedTheme = 2;
+            }
+            Access.DashBoard.ChangeColor();
+        }
+
+        private void AutoStartUp_Click(object sender, RoutedEventArgs e)
+        {
+            RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            if ((bool)AutoStartUp.IsChecked)
+            {
+                
+                if (rk != null) {
+                    rk.SetValue("LocyanFrpDesktop", Assembly.GetExecutingAssembly().Location);
+                }
+                Global.Config.AutoStartUp = true;
+            }
+            else
+            {
+                rk.DeleteValue("LocyanFrpDesktop");
+                Global.Config.AutoStartUp = false;
+            }
         }
     }
 }
