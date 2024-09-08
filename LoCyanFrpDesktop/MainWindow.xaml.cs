@@ -44,11 +44,6 @@ namespace LoCyanFrpDesktop
         
         public MainWindow()
         {
-            //InitialBanner initialBanner = new();
-
-            //initialBanner.Show();
-            //initialBanner.Hide();
-            
             InitializeComponent();
             if (Random.Shared.Next(0, 10000) == 5000)
             {
@@ -68,7 +63,7 @@ namespace LoCyanFrpDesktop
             Access.MainWindow = this;
             Update.Init();
             ScheduledTask.Init();
-
+            ProtocolHandler.Init();
 
         }
         private async void CheckNetworkAvailability()

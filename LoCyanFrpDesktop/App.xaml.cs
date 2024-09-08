@@ -15,6 +15,10 @@ using System.Security;
 using CefSharp.Wpf;
 using System.Runtime.ConstrainedExecution;
 using CefSharp;
+using System.Diagnostics;
+using System.Security.Policy;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace LoCyanFrpDesktop
 {
@@ -26,6 +30,8 @@ namespace LoCyanFrpDesktop
     {
         private static string? Username = null;
         private static string? Password = null;
+        private static bool DebugMode = Global.Config.DebugMode;
+        private static bool TokenMode = false;
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool AllocConsole();
@@ -43,66 +49,16 @@ namespace LoCyanFrpDesktop
             
             DispatcherUnhandledException += CurrentDomain_UnhandledException;
             DispatcherUnhandledException += (_, e) => CrashInterception.ShowException(e.Exception);
-            int UsernameNum = 0;
-            int PasswordNum = 0;
-            bool DebugMode = Global.Config.DebugMode;
+            
+            
             // 处理启动参数
 
             string[] args = e.Args;
-            base.OnStartup(e);
-
-            if (args.Length > 0)
-            {   
-                for (int j = 0; j < args.Count(); j++) {
-                    if (args[j] == "--user" || args[j] == "--User" || args[j] == "--Username" || args[j] == "--username")
-                    {
-                        UsernameNum = j;
-                    }
-                    else if(args[j] == "--password" || args[j] == "--Password")
-                    {
-                        PasswordNum = j;
-                    }else if(args[j] == "--debug")
-                    {
-                        DebugMode = true;
-                    }
-                }
-                int Num = UsernameNum - PasswordNum;
-                if (Num >= 2 && Num <= -2) {
-                    Username = args[UsernameNum + 1];
-                    Password = args[PasswordNum + 1];
-                    if (Password != null && Username != null)
-                    {   
-                        Global.Config.Username = Username;
-                        foreach (char c in Password.ToCharArray()) {
-                            Global.Password.AppendChar(c);
-                        }
-                        
-                        //LoCyanFrpDesktop.Properties.Settings.Default.username = Username;
-                        //LoCyanFrpDesktop.Properties.Settings.Default.password = Password;
-                        Global.LoginedByConsole = true;
-                    }
-                }
-                
-                if (DebugMode)
-                {
-                    AllocConsole(); // 打开控制台
-                }
-                else
-                {
-                    FreeConsole(); // 关闭控制台
-                }
-                // 解析和处理参数
-                // 这里可以根据参数的内容执行不同的操作
-                ProcessUrlParameters(args);
-                for (int x = 0; x < args.Count(); x++) {
-                    if (x != args.Count() - 1)
-                    {
-                        Console.Write(args[x]);
-                    }
-                    else { 
-                        Console.WriteLine(args[x]);
-                    }
-                }
+            
+            ProcessStartupParameters(args);
+            if (!TokenMode)
+            {
+                base.OnStartup(e);
             }
             
         }
@@ -115,21 +71,86 @@ namespace LoCyanFrpDesktop
         {
             e.Handled = true;
         }
-        private void ProcessUrlParameters(string[] args)
+        private static void ProcessStartupParameters(string[] args)
         {
-            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string filePath = Path.Combine(documentsPath, "auto_launch.ini");
-
-            string arguments = string.Join(" ", args);
-
-            try
+            int UsernameNum = 0;
+            int PasswordNum = 0;
+            if (args.Length > 0)
             {
-                File.WriteAllText(filePath, arguments);
-            }
-            catch (Exception ex)
-            {
-                // 处理写入文件时可能发生的异常
-                MessageBox.Show("写入文件时出现错误：" + ex.Message);
+
+                string pattern = @"^locyanfrp://([^/]+)/(\d+)$";
+                Regex regex = new Regex(pattern);
+
+                for (int j = 0; j < args.Count(); j++)
+                {
+                    if (args[j] == "--user" || args[j] == "--User" || args[j] == "--Username" || args[j] == "--username")
+                    {
+                        UsernameNum = j;
+                    }
+                    else if (args[j] == "--password" || args[j] == "--Password")
+                    {
+                        PasswordNum = j;
+                    }
+                    else if (args[j] == "--debug")
+                    {
+                        DebugMode = true;
+                    }
+                    else
+                    {   
+                        string url = args[j];
+                        Match match = regex.Match(url);
+                        if (match.Success) {
+                            Console.WriteLine($"Received URL: {url}");
+                            string[] parsedParameters = new string[]
+                            {
+                                match.Groups[1].Value,
+                                match.Groups[2].Value
+                            };
+                            TokenMode = true;
+                            DashBoard_Token dashBoard_Token = new DashBoard_Token(match.Groups[1].Value, int.Parse(match.Groups[2].Value));
+                            dashBoard_Token.Show();
+
+                        }
+                    }
+                }
+                int Num = UsernameNum - PasswordNum;
+                if (Num >= 2 && Num <= -2)
+                {
+                    Username = args[UsernameNum + 1];
+                    Password = args[PasswordNum + 1];
+                    if (Password != null && Username != null)
+                    {
+                        Global.Config.Username = Username;
+                        foreach (char c in Password.ToCharArray())
+                        {
+                            Global.Password.AppendChar(c);
+                        }
+
+                        Global.LoginedByConsole = true;
+                    }
+                }
+
+                if (DebugMode)
+                {
+                    AllocConsole(); // 打开控制台
+                }
+                else
+                {
+                    FreeConsole(); // 关闭控制台
+                }
+                // 解析和处理参数
+                // 这里可以根据参数的内容执行不同的操作
+                for (int x = 0; x < args.Count(); x++)
+                {
+                    if (x != args.Count() - 1)
+                    {
+                        Console.Write(args[x]);
+                    }
+                    else
+                    {
+                        Console.WriteLine(args[x]);
+                    }
+                }
             }
         }
     }
