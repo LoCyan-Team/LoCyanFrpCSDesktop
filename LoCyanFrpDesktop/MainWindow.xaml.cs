@@ -44,6 +44,17 @@ namespace LoCyanFrpDesktop
         
         public MainWindow()
         {
+            Init(App.TokenMode);
+            if (App.TokenMode)
+            {
+                this.Hide();
+            }
+            
+                
+            
+        }
+        private void Init(bool TokenMode)
+        {
             InitializeComponent();
             if (Random.Shared.Next(0, 10000) == 5000)
             {
@@ -57,14 +68,13 @@ namespace LoCyanFrpDesktop
                 Login(Global.Config.Username, ConvertToUnsecureString(Global.Password));
             }
             Tips.Text = Global.Tips[Random.Shared.Next(0, Global.Tips.Count - 1)];
-            CheckNetworkAvailability();
+            if (!TokenMode) CheckNetworkAvailability();
             _Login.IsEnabled = true;
             DataContext = this;
             Access.MainWindow = this;
-            Update.Init();
-            ScheduledTask.Init();
-            ProtocolHandler.Init();
-
+            if (!TokenMode) Update.Init();
+            if (!TokenMode) ScheduledTask.Init();
+            if (!TokenMode) ProtocolHandler.Init();
         }
         private async void CheckNetworkAvailability()
         {

@@ -19,7 +19,7 @@ namespace LoCyanFrpDesktop.Utils
         //public string Password = "";
         public string FrpToken = "";
         public string FrpcPath = "";
-        public bool DebugMode = false;
+        public bool DebugMode = true;
         public bool AutoStartUp = false;
         public int AppliedTheme = 0;
         public List<Proxy> AutoLaunch = new();

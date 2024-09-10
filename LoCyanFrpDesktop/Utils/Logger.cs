@@ -51,7 +51,7 @@ namespace LoCyanFrpDesktop.Utils
             if (type == LogType.Error) {
                 Console.WriteLine("[Error] " + line); return;
             }
-            Access.Status.Dispatcher.Invoke(() => Access.Status.Append(LogPreProcess.Color(type, line)));
+            try { Access.Status.Dispatcher.Invoke(() => Access.Status.Append(LogPreProcess.Color(type, line))); } catch (Exception e) { }
             LogPreProcess.Process.Cache.Add(new(type, line));
             if (LogPreProcess.Process.Cache.Count > 200)
             {

@@ -31,7 +31,7 @@ namespace LoCyanFrpDesktop
         private static string? Username = null;
         private static string? Password = null;
         private static bool DebugMode = Global.Config.DebugMode;
-        private static bool TokenMode = false;
+        public static bool TokenMode = false;
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool AllocConsole();
@@ -56,10 +56,7 @@ namespace LoCyanFrpDesktop
             string[] args = e.Args;
             
             ProcessStartupParameters(args);
-            if (!TokenMode)
-            {
-                base.OnStartup(e);
-            }
+            base.OnStartup(e);
             
         }
         protected override void OnExit(ExitEventArgs e)
