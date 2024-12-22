@@ -1,4 +1,4 @@
-> Deprecated
+> Deprecated  
 > Moved to: [Shiroiame-Kusu/Kairo](https://github.com/Shiroiame-Kusu/Kairo)
 
 # LoCyanFrpDesktop-Impl
